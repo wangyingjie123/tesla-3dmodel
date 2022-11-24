@@ -1,10 +1,10 @@
 import { createRouter, createWebHistory } from 'vue-router';
 import Home from '@/pages/home/index.vue';
-const routes = [
+export const routes = [
   { path: '/', component: Home },
-  { path: '/webrtc', component: () => import('@/pages/webrtc/index.vue') },
-  { path: '/webrtc-p2p', component: () => import('@/pages/webrtc-p2p/index.vue') },
-  { path: '/three', component: () => import('@/pages/three/index.vue') },
+  { path: '/webrtc', component: () => import('@/pages/webrtc/index.vue'), title: 'webrtc' },
+  { path: '/webrtc-p2p', component: () => import('@/pages/webrtc-p2p/index.vue'), title: 'webrtc远程通话' },
+  { path: '/three', component: () => import('@/pages/three/index.vue'), title: 'threejs-特斯拉' },
 ];
 
 // 3. 创建路由实例并传递 `routes` 配置
