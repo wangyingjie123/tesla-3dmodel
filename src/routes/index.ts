@@ -3,6 +3,7 @@ import Home from '@/pages/home/index.vue';
 const routes = [
   { path: '/', component: Home },
   { path: '/webrtc', component: () => import('@/pages/webrtc/index.vue') },
+  { path: '/webrtc-p2p', component: () => import('@/pages/webrtc-p2p/index.vue') },
   { path: '/three', component: () => import('@/pages/three/index.vue') },
 ];
 
