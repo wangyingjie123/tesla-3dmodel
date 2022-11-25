@@ -50,5 +50,5 @@
     "vue/multi-word-component-names": "off" // vue组件模板名称
   },
   // 忽略构建产物 dist、单测覆盖率报告 coverage，开启.rc 配置文件的检查（默认忽略 node_modules）
-  "ignorePatterns": ["dist", "!.*rc.cjs", "index.html", "auto-imports.d.ts", "auto-imports.d.ts"]
+  "ignorePatterns": ["dist", "!.*rc.cjs", "index.html", "auto-imports.d.ts", "auto-imports.d.ts", "public/js"]
 }
