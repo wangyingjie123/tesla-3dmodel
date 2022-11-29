@@ -17,16 +17,21 @@
           </el-row>
         </el-col>
         <el-col :span="8">
-          <OfferForm
-            :localOffer="localOffer"
-            :remoteAnswer="remoteAnswer"
-            @createOffer="createOffer"
-            @createAnswer="createAnswer"
-            @addAnswer="addAnswer"
-          ></OfferForm>
+          <el-collapse v-model="activeNames">
+            <el-collapse-item title="本地操作区域-打开2个tab页" name="1">
+              <OfferForm
+                :localOffer="localOffer"
+                :remoteAnswer="remoteAnswer"
+                @createOffer="createOffer"
+                @createAnswer="createAnswer"
+                @addAnswer="addAnswer"
+              ></OfferForm>
+            </el-collapse-item>
+          </el-collapse>
         </el-col>
       </el-row>
     </el-main>
+    <el-footer></el-footer>
   </el-container>
 </template>
 <script setup lang="ts">
@@ -35,6 +40,7 @@ import { ref, onMounted } from 'vue';
 import OfferForm from './offer-form.vue';
 const localRef = ref<HTMLVideoElement>();
 const remoteRef = ref<HTMLVideoElement>();
+const activeNames = ref('');
 // 创建本地/远程 SDP 描述, 用于描述本地/远程的媒体流
 const localOffer = ref('');
 const remoteAnswer = ref('');
@@ -77,7 +83,6 @@ const createOffer = async () => {
   const offer = await pc.createOffer();
   // 设置本地描述
   await pc.setLocalDescription(offer);
-  // await pc.setLocalDescription()
   // 到这里，我们本地的 offer 就创建好了，一般在这里通过信令服务器发送 offerSdp 给远端
   // 监听 RTCPeerConnection 的 onicecandidate 事件，当 ICE 服务器返回一个新的候选地址时，就会触发该事件
   pc.onicecandidate = async (event) => {
@@ -122,6 +127,10 @@ onMounted(() => {
     text-align: center;
     font-size: var(--el-font-size-medium);
     line-height: var(--el-header-height);
+  }
+  &-footer {
+    background-color: var(--el-color-primary-light-7);
+    height: var(--el-header-height);
   }
   &-subtitle {
     text-align: center;
