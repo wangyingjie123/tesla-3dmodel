@@ -47,7 +47,7 @@ import io, { Socket } from 'socket.io-client';
 const peerConnection = new RTCPeerConnection({
   iceServers: [
     {
-      urls: 'stun:stun.voipbuster.com ',
+      urls: 'stun:stun.voipbuster.com',
     },
   ],
 });
@@ -63,7 +63,7 @@ function initConnect() {
     return;
   }
   socket = io('http://localhost:3001');
-  // socket = io('https://192.168.1.126:12345')
+  // socket = io('https://192.168.1.126:12345');
   // 连接成功时触发
   socket.on('connect', () => {
     handleConnect();

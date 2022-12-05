@@ -5,7 +5,7 @@ export const routes = [
   { path: '/webrtc', component: () => import('@/pages/webrtc/index.vue'), title: 'webrtc' },
   { path: '/webrtc-p2p', component: () => import('@/pages/webrtc-p2p/index.vue'), title: 'webrtc本地通话' },
   { path: '/webrtc-p2p-remote', component: () => import('@/pages/webrtc-p2p/p2p-remote.vue'), title: 'webrtc远程通话' },
-  { path: '/webrtc-player', component: () => import('@/pages/webrtc-player/index.vue'), title: 'webrtc播放' },
+  { path: '/webrtc-player', component: () => import('@/pages/webrtc-player/index.vue'), title: 'webrtc播放视频流' },
   { path: '/three', component: () => import('@/pages/three/index.vue'), title: 'threejs-特斯拉' },
 ];
 
