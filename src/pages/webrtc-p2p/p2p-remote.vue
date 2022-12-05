@@ -1,17 +1,19 @@
 <template>
-  <div class="signaling-p2p-container">
-    <div class="video-container">
-      <div class="main-video">
-        <video id="remote-video" class="video-container__dom" autoplay playsinline></video>
-        <div class="video-title">远程视频</div>
-      </div>
-      <div class="video-list">
-        <div class="video-box">
-          <video id="local" class="video-box__dom" autoplay playsinline></video>
-          <div class="video-title">我</div>
+  <div class="p2p-container">
+    <el-row class="p2p-container__row">
+      <el-col :span="17" class="remote__left">
+        <div class="remote-video">
+          <video id="remote-video" class="remote-video__dom" autoplay playsinline></video>
         </div>
-      </div>
-    </div>
+        <div class="video-title">远程视频</div>
+      </el-col>
+      <el-col :span="7" class="local__right">
+        <div class="local-video">
+          <video id="local" class="local-video__dom" autoplay playsinline></video>
+        </div>
+        <div class="video-title">我</div>
+      </el-col>
+    </el-row>
     <div class="operation">
       <label class="operation-label">房间号：</label>
       <el-input
@@ -60,7 +62,7 @@ function initConnect() {
     ElMessage.error('请输入房间号');
     return;
   }
-  socket = io('https://47.95.239.198:3001');
+  socket = io('http://localhost:3001');
   // socket = io('https://192.168.1.126:12345')
   // 连接成功时触发
   socket.on('connect', () => {
@@ -151,8 +153,12 @@ async function createOffer() {
       }
     }
   };
-  const offer = await peerConnection.createOffer();
-  await peerConnection.setLocalDescription(offer);
+  try {
+    const offer = await peerConnection.createOffer();
+    await peerConnection.setLocalDescription(offer);
+  } catch (e) {
+    console.log(e);
+  }
 }
 // 创建 answer
 async function createAnswer(val: string) {
@@ -203,68 +209,70 @@ function handleLeave() {
   // 关闭socket连接
   socket.disconnect();
 }
-onMounted(async () => {
-  await init();
+onMounted(() => {
+  init();
 });
 </script>
 <style lang="scss" scoped>
-.signaling-p2p-container {
+.p2p-container {
   height: 100vh;
   display: flex;
   justify-content: space-between;
   flex-direction: column;
   align-items: center;
-  .video-container {
-    display: flex;
-    justify-content: space-between;
-    flex-direction: row;
-    align-items: center;
+  &__row {
     width: 100%;
-    height: 100%;
-    &__dom {
-      margin: 0 auto;
-      border: 4px solid #048ff2;
-      background-color: #363739;
-      width: 70%;
+    background-color: #000;
+    flex: 1;
+  }
+  .remote {
+    &__left {
+      display: flex;
+      flex-direction: column;
     }
-    .main-video {
+    &-video {
       flex: 1;
       display: flex;
       align-items: center;
       justify-content: center;
-      height: 100%;
-      background-color: #3f4044;
-      position: relative;
-    }
-    .video-title {
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      width: 100%;
-      background-color: #000000b3;
-      color: #fff;
-      text-align: center;
-      box-sizing: border-box;
-      padding: 5px;
-      border-left: 4px;
-      border-right: 4px;
-      border-bottom: 4px;
-      border-style: solid;
-      border-color: #048ff2;
-    }
-    .video-list {
-      width: 380px;
-      padding: 20px;
-      height: 100%;
-      background-color: #405982;
-      .video-box {
-        position: relative;
-        &__dom {
-          width: 100%;
-        }
+      &__dom {
+        border: 2px solid #048ff2;
+        background-color: #363739;
+        border-radius: 4px;
+        width: 60%;
+        aspect-ratio: 16 / 9;
       }
     }
   }
+  .local {
+    &__right {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 0 30px;
+    }
+    &-video {
+      width: 100%;
+      &__dom {
+        width: 100%;
+        border: 2px solid #048ff2;
+        background-color: #363739;
+        border-radius: 4px;
+        aspect-ratio: 16 / 9;
+      }
+    }
+  }
+  .video-title {
+    width: 100%;
+    background-color: #000000b3;
+    color: #fff;
+    text-align: center;
+    box-sizing: border-box;
+    border: 2px solid;
+    padding: 5px 0;
+    border-color: #048ff2;
+  }
+
   .operation {
     &-label {
       color: #fff;
