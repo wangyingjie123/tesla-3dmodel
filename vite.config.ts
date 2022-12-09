@@ -1,5 +1,6 @@
 import { defineConfig } from 'vite';
 import path from 'path';
+import * as fs from 'fs';
 import vue from '@vitejs/plugin-vue';
 import eslintPlugin from 'vite-plugin-eslint'; //导入包
 import AutoImport from 'unplugin-auto-import/vite';
@@ -36,5 +37,9 @@ export default defineConfig({
   server: {
     host: '0.0.0.0',
     port: 9005,
+    https: {
+      key: fs.readFileSync(`${__dirname}/server/assets/localhost-key.pem`),
+      cert: fs.readFileSync(`${__dirname}/server/assets/localhost.pem`),
+    },
   },
 });

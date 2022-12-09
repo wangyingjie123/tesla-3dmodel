@@ -1,11 +1,22 @@
-import http from 'http';
+import https from 'https';
 import { Server } from 'socket.io';
 import express from 'express';
-// import cors from 'cors'
+import path from 'path';
+import { fileURLToPath } from 'url';
+import fs from 'fs';
 
-const port = 3001;
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+
+//https证书
+const options = {
+  cert: fs.readFileSync(path.join(__dirname, './assets/localhost.pem')),
+  key: fs.readFileSync(path.join(__dirname, './assets/localhost-key.pem')),
+};
+
+const port = 3333;
 const app = express();
-const httpServer = http.createServer(app);
+const httpServer = https.createServer(options, app);
 // 创建信令服务器
 const io = new Server(httpServer, {
   cors: {
@@ -43,7 +54,7 @@ app.get('/', (req, res) => {
 // 在指定端口启动服务器
 httpServer.listen(port, '0.0.0.0', () => {
   console.log(
-    '\n Http server up and running at => http://%s:%s',
+    '\n Http server up and running at => https://%s:%s',
     httpServer.address().address,
     httpServer.address().port
   );

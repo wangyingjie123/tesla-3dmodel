@@ -62,8 +62,8 @@ function initConnect() {
     ElMessage.error('请输入房间号');
     return;
   }
-  socket = io('http://localhost:3001');
-  // socket = io('https://192.168.1.126:12345');
+  // socket = io('http://localhost:3001');
+  socket = io('https://10.1.60.61:3333');
   // 连接成功时触发
   socket.on('connect', () => {
     handleConnect();
