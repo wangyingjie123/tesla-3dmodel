@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "element-plus": "^2.2.22",
+    "goldvideo-player": "^1.0.2",
     "socket.io": "^4.5.4",
     "socket.io-client": "^4.5.4",
     "three": "^0.146.0",
