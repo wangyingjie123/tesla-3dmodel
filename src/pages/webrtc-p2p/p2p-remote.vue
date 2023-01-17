@@ -2,7 +2,7 @@
   <div class="p2p-container">
     <el-row class="p2p-container__row">
       <el-col :span="17" class="remote__left">
-        <div class="remote-video">
+        <div class="remote-video margin-top-10">
           <video id="remote-video" class="remote-video__dom" autoplay playsinline></video>
         </div>
         <div class="video-title">远程视频</div>
@@ -215,7 +215,7 @@ onMounted(() => {
 </script>
 <style lang="scss" scoped>
 .p2p-container {
-  height: 100vh;
+  height: 100%;
   display: flex;
   justify-content: space-between;
   flex-direction: column;
@@ -229,6 +229,7 @@ onMounted(() => {
     &__left {
       display: flex;
       flex-direction: column;
+      gap: 10px;
     }
     &-video {
       flex: 1;

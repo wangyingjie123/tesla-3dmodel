@@ -1,9 +1,13 @@
 <template>
-  <h2>这是首页</h2>
-  <div v-for="item in routes" :key="item.path" class="margin-left-20">
-    <router-link v-if="item.title" :to="item.path">{{ item.title }}</router-link>
+  <div class="inner">
+    <el-skeleton animated />
+    <el-skeleton style="--el-skeleton-circle-size: 100px" animated>
+      <template #template>
+        <el-skeleton-item variant="circle" />
+      </template>
+    </el-skeleton>
   </div>
 </template>
 <script setup lang="ts">
-import { routes } from '@/routes';
+// import Layout from '@/layout/index.vue';
 </script>

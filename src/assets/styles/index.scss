@@ -36,7 +36,10 @@ body {
 .lgscreen-app {
   height: 100%;
 }
-
+.inner {
+  width: 1400px;
+  margin: 0 auto;
+}
 ul,
 li {
   list-style: none;
