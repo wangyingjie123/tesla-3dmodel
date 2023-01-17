@@ -26,13 +26,16 @@ export const routes = [
   {
     path: '/three',
     title: 'threejs',
-    children: [{ path: 'tesla-3d', component: () => import('@/pages/three/index.vue'), title: 'threejs-特斯拉' }],
+    children: [
+      { path: 'tesla-3d', component: () => import('@/pages/three/tesla-model.vue'), title: 'threejs-特斯拉' },
+      { path: 'home-3d', component: () => import('@/pages/three/home-3d.vue'), title: 'threejs-全景房屋' },
+    ],
   },
   {
     path: '/h265-player',
     title: 'h265播放器',
     component: Layout,
-    children: [{ path: 'h265-player', component: () => import('@/pages/h265-player/index.vue'), title: 'h265播放器' }],
+    children: [{ path: 'gold-player', component: () => import('@/pages/h265-player/index.vue'), title: 'h265播放器' }],
   },
 ];
 

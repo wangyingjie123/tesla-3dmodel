@@ -1,5 +1,5 @@
 <template>
-  <el-container>
+  <el-container class="layout-container">
     <el-header>
       <el-menu :default-active="activeIndex" mode="horizontal" router>
         <el-menu-item index="/">首页</el-menu-item>
@@ -26,3 +26,10 @@ import { routes } from '@/routes';
 const routers = ref(routes);
 const activeIndex = ref(window.location.pathname);
 </script>
+<style lang="scss" scoped>
+.layout {
+  &-container {
+    height: 100%;
+  }
+}
+</style>
