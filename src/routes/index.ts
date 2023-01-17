@@ -14,7 +14,7 @@ export const routes = [
     component: Layout,
     children: [
       { path: 'local', component: () => import('@/pages/webrtc-local/index.vue'), title: '本地摄像头' },
-      { path: 'p2p', component: () => import('@/pages/webrtc-p2p/index.vue'), title: '本地通话' },
+      { path: 'p2p', component: () => import('@/pages/webrtc-p2p/index.vue'), title: 'webrtc本地通话' },
       {
         path: 'p2p-remote',
         component: () => import('@/pages/webrtc-p2p/p2p-remote.vue'),
@@ -29,6 +29,7 @@ export const routes = [
     children: [
       { path: 'tesla-3d', component: () => import('@/pages/three/tesla-model.vue'), title: 'threejs-特斯拉' },
       { path: 'home-3d', component: () => import('@/pages/three/home-3d.vue'), title: 'threejs-全景房屋' },
+      { path: 'cyberpunk-3d', component: () => import('@/pages/three/games.vue'), title: 'threejs-赛博朋克' },
     ],
   },
   {

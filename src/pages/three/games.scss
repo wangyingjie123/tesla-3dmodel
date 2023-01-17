@@ -1,0 +1,55 @@
+.games {
+  --yellow-color: #f9f002;
+  --border-color: #8ae66e;
+  --blue-color: #00e6f6;
+  --header-height: 80px;
+  --aside-width: 400px;
+  --glitched-duration: 0.9s;
+}
+.games {
+  -webkit-filter: saturate(0.85);
+  filter: saturate(0.85);
+  height: 100%;
+  overflow: hidden;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  user-select: none;
+  width: 100%;
+  // animation: bg-animation 0.2s infinite;
+  background: #000 url('@/assets/images/cyberpunk/background.png') repeat 0 0;
+}
+@keyframes bg-animation {
+  0% {
+    transform: translate(0, 0);
+  }
+  10% {
+    transform: translate(-5%, -5%);
+  }
+  20% {
+    transform: translate(-10%, 5%);
+  }
+  30% {
+    transform: translate(5%, -10%);
+  }
+  40% {
+    transform: translate(-5%, 15%);
+  }
+  50% {
+    transform: translate(-10%, 5%);
+  }
+  60% {
+    transform: translate(15%, 0);
+  }
+  70% {
+    transform: translate(0, 10%);
+  }
+  80% {
+    transform: translate(-15%, 0);
+  }
+  90% {
+    transform: translate(10%, 5%);
+  }
+  100% {
+    transform: translate(5%, 0);
+  }
+}

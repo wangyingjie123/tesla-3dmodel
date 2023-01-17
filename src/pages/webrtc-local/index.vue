@@ -34,7 +34,7 @@
   <Video ref="sonRef"></Video>
 </template>
 <script lang="ts" setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import Shared from './shared.vue';
 import Video from './video.vue';
 const video = ref<HTMLVideoElement>();
@@ -43,11 +43,12 @@ const sonRef = ref<{ onMounted: (video: HTMLVideoElement) => void }>();
 const deviceList = ref<MediaDeviceInfo[]>([]);
 const cameraDirection = ref(1);
 
+let localStream: MediaStream;
 // 获取本地音视频流
 async function getLocalStream(constraints?: MediaStreamConstraints) {
   // 获取媒体流
-  const stream = await navigator.mediaDevices.getUserMedia(constraints);
-  playLocalStream(stream);
+  localStream = await navigator.mediaDevices.getUserMedia(constraints);
+  playLocalStream(localStream);
 }
 
 // 播放本地视频流
@@ -126,6 +127,12 @@ onMounted(() => {
     audio: true,
   });
   getDevices();
+});
+
+onUnmounted(() => {
+  localStream.getVideoTracks().forEach((track) => {
+    track.enabled = false;
+  });
 });
 </script>
 <style scoped lang="scss">
