@@ -1,10 +1,38 @@
 <template>
   <div class="games">
+    <header class="games-header">
+      <div class="games-header-bg"></div>
+      <div class="games-header-inner">
+        <HeaderLeft />
+      </div>
+      <div class="games-header-logo"></div>
+    </header>
     <canvas id="webgl"></canvas>
+    <aside class="aside left">
+      <AsideText @handleStartButtonClick="handleStartButtonClick" />
+      <div class="box">
+        <div class="box-chart" id="chart_1"></div>
+      </div>
+      <div class="box dotted aside-text">
+        <div class="box-chart" id="chart_2"></div>
+      </div>
+    </aside>
+    <aside class="aside right">
+      <div class="box">
+        <div class="box-chart" id="chart_3"></div>
+      </div>
+      <div class="box">
+        <div class="box-chart" id="chart_4"></div>
+      </div>
+      <div class="box dotted aside-text">
+        <div class="box-chart" id="chart_5"></div>
+      </div>
+    </aside>
+    <Footer />
+    <div class="games-mask"></div>
   </div>
 </template>
 <script setup>
-// https://github.com/dragonir/3d-panoramic-vision
 import { ref, onMounted } from 'vue';
 import * as THREE from 'three';
 import * as dat from 'dat.gui';
@@ -15,9 +43,45 @@ import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { GlitchPass } from 'three/examples/jsm/postprocessing/GlitchPass.js';
 import { randFloat, randInt } from 'three/src/math/MathUtils';
+// echarts
+import * as echarts from 'echarts/core';
+import { BarChart, LineChart, PieChart } from 'echarts/charts';
+import {
+  TitleComponent,
+  TooltipComponent,
+  GridComponent,
+  DatasetComponent,
+  TransformComponent,
+  PolarComponent,
+  LegendComponent,
+  ToolboxComponent,
+} from 'echarts/components';
+import { LabelLayout, UniversalTransition } from 'echarts/features';
+import { CanvasRenderer } from 'echarts/renderers';
+// other
+import { chart_1_option, chart_2_option, chart_3_option, chart_4_option, chart_5_option } from './config';
 import imgData from '@/assets/images/cyberpunk/earth.jpg';
 import lineFragmentShader from '@/assets/line/fragment.glsl?raw';
-// import { tips } from './config';
+import HeaderLeft from './components/header-left/index.vue';
+import AsideText from './components/aside-text/index.vue';
+import Footer from './components/footer/index.vue';
+
+echarts.use([
+  TitleComponent,
+  TooltipComponent,
+  GridComponent,
+  DatasetComponent,
+  TransformComponent,
+  BarChart,
+  LabelLayout,
+  UniversalTransition,
+  CanvasRenderer,
+  PolarComponent,
+  LegendComponent,
+  ToolboxComponent,
+  LineChart,
+  PieChart,
+]);
 const renderGlithPass = ref(false);
 const initThree = () => {
   let earth;
@@ -68,21 +132,27 @@ const initThree = () => {
     impacts: {
       value: impacts,
     },
+    // 陆地色块大小
     maxSize: {
       value: 0.04,
     },
+    // 海洋色块大小
     minSize: {
       value: 0.025,
     },
+    // 冲击波高度
     waveHeight: {
       value: 0.1,
     },
+    // 冲击波范围
     scaling: {
       value: 1,
     },
+    // 冲击波径向渐变内侧颜色
     gradInner: {
       value: new THREE.Color(params.colors.gradInner),
     },
+    // 冲击波径向渐变外侧颜色
     gradOuter: {
       value: new THREE.Color(params.colors.gradOuter),
     },
@@ -121,6 +191,7 @@ const initThree = () => {
     t.runTween();
   });
   makeGlobeOfPoints();
+  // 页面缩放监听并重新更新场景和相机
   window.addEventListener('resize', onWindowResize);
 
   const gui = new dat.GUI();
@@ -149,6 +220,7 @@ const initThree = () => {
   gui.add(params, 'reset').name('重置');
   gui.hide();
 
+  // 页面重绘动画
   renderer.setAnimationLoop(() => {
     TWEEN.update();
     earth.rotation.y += 0.001;
@@ -188,6 +260,7 @@ const initThree = () => {
     const dz = 2 / counter;
     let long = 0;
     let z = 1 - dz / 2;
+    // 创建10000个平面圆点网格并将其定位到球坐标
     for (let i = 0; i < counter; i++) {
       r = Math.sqrt(1 - z * z);
       p.set(Math.cos(long) * r, z, -Math.sin(long) * r).multiplyScalar(rad);
@@ -356,8 +429,31 @@ const initThree = () => {
     composer.setSize(window.innerWidth, window.innerHeight);
   }
 };
+
+const initCharts = () => {
+  const chart_1 = echarts.init(document.querySelector('#chart_1'), 'dark');
+  chart_1 && chart_1.setOption(chart_1_option);
+
+  const chart_2 = echarts.init(document.querySelector('#chart_2'), 'dark');
+  chart_2 && chart_2.setOption(chart_2_option);
+
+  const chart_3 = echarts.init(document.querySelector('#chart_3'), 'dark');
+  chart_3 && chart_3.setOption(chart_3_option);
+
+  const chart_4 = echarts.init(document.querySelector('#chart_4'), 'dark');
+  chart_4 && chart_4.setOption(chart_4_option);
+
+  const chart_5 = echarts.init(document.querySelector('#chart_5'), 'dark');
+  chart_5 && chart_5.setOption(chart_5_option);
+};
+
+// 添加故障风格后期处理
+const handleStartButtonClick = () => {
+  renderGlithPass.value = !renderGlithPass.value;
+};
 onMounted(() => {
   initThree();
+  initCharts();
 });
 </script>
 <style lang="scss" scoped src="./games.scss"></style>
