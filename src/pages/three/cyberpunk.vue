@@ -33,6 +33,7 @@
   </div>
 </template>
 <script setup>
+// https://dragonir.github.io/3d/#/earthDigital
 import { ref, onMounted } from 'vue';
 import * as THREE from 'three';
 import * as dat from 'dat.gui';
@@ -456,4 +457,4 @@ onMounted(() => {
   initCharts();
 });
 </script>
-<style lang="scss" scoped src="./games.scss"></style>
+<style lang="scss" scoped src="./cyberpunk.scss"></style>

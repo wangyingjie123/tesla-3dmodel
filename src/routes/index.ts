@@ -29,7 +29,7 @@ export const routes = [
     children: [
       { path: 'tesla-3d', component: () => import('@/pages/three/tesla-model.vue'), title: 'threejs-特斯拉' },
       { path: 'home-3d', component: () => import('@/pages/three/home-3d.vue'), title: 'threejs-全景房屋' },
-      { path: 'cyberpunk-3d', component: () => import('@/pages/three/games.vue'), title: 'threejs-赛博朋克' },
+      { path: 'cyberpunk-3d', component: () => import('@/pages/three/cyberpunk.vue'), title: 'threejs-赛博朋克' },
     ],
   },
   {
