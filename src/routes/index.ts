@@ -38,6 +38,14 @@ export const routes = [
     component: Layout,
     children: [{ path: 'gold-player', component: () => import('@/pages/h265-player/index.vue'), title: 'h265播放器' }],
   },
+  {
+    path: '/ai-algorithm',
+    title: '人物防遮挡',
+    component: Layout,
+    children: [
+      { path: 'body-noblock', component: () => import('@/pages/danmu-noblock/index.vue'), title: '人物防遮挡' },
+    ],
+  },
 ];
 
 // 3. 创建路由实例并传递 `routes` 配置
