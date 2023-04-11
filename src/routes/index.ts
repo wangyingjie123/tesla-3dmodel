@@ -30,6 +30,7 @@ export const routes = [
       { path: 'tesla-3d', component: () => import('@/pages/three-model/tesla-model.vue'), title: 'threejs-特斯拉' },
       { path: 'home-3d', component: () => import('@/pages/three-model/home-3d.vue'), title: 'threejs-全景房屋' },
       { path: 'cyberpunk-3d', component: () => import('@/pages/three-model/cyberpunk.vue'), title: 'threejs-赛博朋克' },
+      { path: 'puzzle-3d', component: () => import('@/pages/three-model/puzzle.vue'), title: 'threejs-球体拼图' },
     ],
   },
   {
