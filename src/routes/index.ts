@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from 'vue-router';
+import { createRouter, createWebHashHistory } from 'vue-router';
 import Home from '@/pages/home/index.vue';
 import Layout from '@/layout/index.vue';
 
@@ -54,6 +54,6 @@ export const routes = [
 // 你可以在这里输入更多的配置，但我们在这里
 // 暂时保持简单
 export const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHashHistory(),
   routes,
 });

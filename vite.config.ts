@@ -21,6 +21,7 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'), // map '@' to './src'
     },
   },
+  base: '/vue3-model/',
   build: {
     rollupOptions: {
       output: {
