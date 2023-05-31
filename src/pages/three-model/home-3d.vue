@@ -7,12 +7,12 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 const panorama = ref<HTMLVideoElement>();
 const urls = [
-  '/panorama/home.left.jpg',
-  '/panorama/home.right.jpg',
-  '/panorama/home.top.jpg',
-  '/panorama/home.bottom.jpg',
-  '/panorama/home.front.jpg',
-  '/panorama/home.back.jpg',
+  './panorama/home.left.jpg',
+  './panorama/home.right.jpg',
+  './panorama/home.top.jpg',
+  './panorama/home.bottom.jpg',
+  './panorama/home.front.jpg',
+  './panorama/home.back.jpg',
 ];
 
 let scene: THREE.Scene;
