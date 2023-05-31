@@ -75,6 +75,6 @@ export const resourceList = [
   new URL('@/assets/images/home/cover_living_room_sofa.png', import.meta.url).href,
   new URL('@/assets/images/home/cover_living_room_tv.png', import.meta.url).href,
   new URL('@/assets/images/home/cover_study_room_art.png', import.meta.url).href,
-  new URL('@/assets/images/home/icon_arrow.png', import.meta.url).href,
-  new URL('@/assets/images/home/vr.png', import.meta.url).href,
+  // new URL('@/assets/images/home/icon_arrow.png', import.meta.url).href,
+  // new URL('@/assets/images/home/vr.png', import.meta.url).href,
 ];
