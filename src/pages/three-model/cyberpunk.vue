@@ -60,7 +60,7 @@ import {
 import { LabelLayout, UniversalTransition } from 'echarts/features';
 import { CanvasRenderer } from 'echarts/renderers';
 // other
-import { chart_1_option, chart_2_option, chart_3_option, chart_4_option, chart_5_option } from './config';
+import { chart_1_option, chart_2_option, chart_3_option, chart_4_option, chart_5_option } from './cyberpunk-config';
 import imgData from '@/assets/images/cyberpunk/earth.jpg';
 import lineFragmentShader from '@/assets/line/fragment.glsl?raw';
 import HeaderLeft from './components/header-left/index.vue';

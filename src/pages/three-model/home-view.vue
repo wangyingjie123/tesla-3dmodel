@@ -1,5 +1,6 @@
 <template>
   <div class="home">
+    <Progress :resourceList="resourceList"></Progress>
     <canvas class="webgl"></canvas>
     <div class="vr">
       <span class="vr-box">
@@ -50,13 +51,14 @@
   </div>
 </template>
 <script setup>
-import { onMounted, reactive, computed } from 'vue';
+import { onMounted, reactive, computed, onUnmounted } from 'vue';
 import * as THREE from 'three';
 import { TWEEN } from 'three/examples/jsm/libs/tween.module.min.js';
 import { OrbitControls } from '@/utils/orbit-controls';
 import Animations from '@/utils/animations';
 import { sleep, toast } from '@/utils/ui-component';
-import { rooms } from './home-data';
+import { rooms, resourceList } from './home-data';
+import Progress from '@/components/progress.vue';
 
 const data = reactive({
   renderer: null,
@@ -66,7 +68,9 @@ const data = reactive({
   cameraZAxis: 2,
   currentRoom: 'living-room',
 });
-
+// 更新窗口大小
+const sizes = {};
+let rafId = 0;
 // 获取交互点的信息
 const interactivePoints = computed(() => {
   const res = [];
@@ -84,11 +88,17 @@ const interactivePoints = computed(() => {
   return res;
 });
 
+const resizeFun = () => {
+  sizes.width = window.innerWidth;
+  sizes.height = window.innerHeight;
+  // 更新渲染
+  data.renderer.setSize(sizes.width, sizes.height);
+  data.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  // 更新相机
+  data.camera.aspect = sizes.width / sizes.height;
+  data.camera.updateProjectionMatrix();
+};
 const initScene = () => {
-  const sizes = {
-    width: window.innerWidth,
-    height: window.innerHeight,
-  };
   // 初始化渲染器
   const canvas = document.querySelector('canvas.webgl');
   const renderer = new THREE.WebGLRenderer({ canvas });
@@ -114,16 +124,7 @@ const initScene = () => {
   controls.maxPolarAngle = Math.PI / 2;
   data.controls = controls;
   // 页面缩放事件监听
-  window.addEventListener('resize', () => {
-    sizes.width = window.innerWidth;
-    sizes.height = window.innerHeight;
-    // 更新渲染
-    renderer.setSize(sizes.width, sizes.height);
-    renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-    // 更新相机
-    camera.aspect = sizes.width / sizes.height;
-    camera.updateProjectionMatrix();
-  });
+  window.addEventListener('resize', resizeFun);
   const textLoader = new THREE.TextureLoader();
   // 创建空间
   const createRoom = (name, position, map) => {
@@ -187,7 +188,7 @@ const initScene = () => {
     // 更新渲染器
     renderer.render(scene, camera);
     // 页面重绘时调用自身
-    window.requestAnimationFrame(tick);
+    rafId = window.requestAnimationFrame(tick);
   };
   tick();
 };
@@ -210,7 +211,13 @@ const handleReactivePointClick = (point) => {
   toast(`您点击了${point.value}`);
 };
 onMounted(() => {
+  sizes.width = window.innerWidth;
+  sizes.height = window.innerHeight;
   initScene();
+});
+onUnmounted(() => {
+  window.removeEventListener('resize', resizeFun);
+  window.cancelAnimationFrame(rafId);
 });
 </script>
 <style lang="scss">

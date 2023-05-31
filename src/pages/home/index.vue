@@ -1,13 +1,22 @@
 <template>
   <div class="inner">
-    <el-skeleton animated />
-    <el-skeleton style="--el-skeleton-circle-size: 100px" animated>
+    <el-skeleton animated :loading="loading" />
+    <el-skeleton style="--el-skeleton-circle-size: 100px" animated :loading="loading">
       <template #template>
         <el-skeleton-item variant="circle" />
       </template>
     </el-skeleton>
+    <el-calendar v-model="date" v-if="!loading" />
   </div>
 </template>
 <script setup lang="ts">
-// import Layout from '@/layout/index.vue';
+import { ref, onMounted } from 'vue';
+
+const date = ref(new Date());
+const loading = ref(true);
+onMounted(() => {
+  setTimeout(() => {
+    loading.value = false;
+  }, 2000);
+});
 </script>

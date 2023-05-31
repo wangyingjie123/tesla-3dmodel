@@ -9,7 +9,7 @@
 </template>
 <script setup>
 import { ref, onMounted, onUnmounted } from 'vue';
-import { weekMap } from '@/pages/three-model/config';
+import { weekMap } from '@/pages/three-model/cyberpunk-config';
 const week = ref(weekMap[new Date().getDay()]);
 const time = ref('00:00:00');
 let timeInterval;
