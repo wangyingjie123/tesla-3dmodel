@@ -20,11 +20,24 @@
   </el-container>
 </template>
 <script lang="ts" setup>
-import { ref } from 'vue';
+import { ref, watch, onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 import { routes } from '@/routes';
 
 const routers = ref(routes);
-const activeIndex = ref(window.location.pathname);
+const activeIndex = ref('/');
+
+const router = useRouter();
+onMounted(() => {
+  activeIndex.value = router.currentRoute.value.path;
+});
+// 监听当前路由变化
+watch(
+  () => router.currentRoute.value,
+  (val) => {
+    activeIndex.value = val.path;
+  }
+);
 </script>
 <style lang="scss" scoped>
 .layout {

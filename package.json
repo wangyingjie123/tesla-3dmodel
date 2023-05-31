@@ -14,9 +14,9 @@
   },
   "dependencies": {
     "@tensorflow-models/body-segmentation": "^1.0.1",
-    "@tensorflow/tfjs-backend-webgl": "^3.21.0",
+    "@tensorflow/tfjs-backend-webgl": "^4.6.0",
     "@tensorflow/tfjs-converter": "^3.13.0",
-    "@tensorflow/tfjs-core": "^3.21.0",
+    "@tensorflow/tfjs-core": "^4.6.0",
     "dat.gui": "^0.7.9",
     "echarts": "^5.4.1",
     "element-plus": "^2.2.22",

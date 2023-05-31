@@ -43,11 +43,10 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, reactive } from 'vue';
 import * as bodySegmentation from '@tensorflow-models/body-segmentation';
-import '@tensorflow/tfjs-core';
 import '@tensorflow/tfjs-backend-webgl';
+import '@tensorflow/tfjs-core';
 import { getCanvasImgDataByVideo, imageDataToDataURL } from '@/utils/fileloader';
 import type { FormInstance, FormRules } from 'element-plus/es/';
-import type { Segmentation } from '@tensorflow-models/body-segmentation/dist/shared/calculators/interfaces/common_interfaces';
 
 enum VideoStatus {
   'ready',
@@ -99,7 +98,7 @@ const setBarrageBgImage = async () => {
     const foregroundColor = { r: 0, g: 0, b: 0, a: 0 };
     const backgroundColor = { r: 0, g: 0, b: 0, a: 255 };
     const backgroundDarkeningMask = await bodySegmentation.toBinaryMask(
-      people as Segmentation[],
+      people,
       foregroundColor,
       backgroundColor,
       drawContour,
