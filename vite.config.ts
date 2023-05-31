@@ -21,9 +21,7 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'), // map '@' to './src'
     },
   },
-  base: './',
   build: {
-    outDir: './docs',
     rollupOptions: {
       output: {
         manualChunks(id) {
