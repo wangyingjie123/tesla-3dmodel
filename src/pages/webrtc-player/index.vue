@@ -9,7 +9,7 @@ import { loadScript } from '@/utils/load-script';
 const video = ref<HTMLVideoElement>();
 
 onMounted(() => {
-  loadScript('/js/jswebrtc.min.js').then(() => {
+  loadScript('./js/jswebrtc.min.js').then(() => {
     const { JSWebrtc } = window;
     const url = 'webrtc://r.ossrs.net/live/livestream';
     new JSWebrtc.Player(url, {

@@ -112,7 +112,7 @@ const setControls = () => {
 };
 
 const init = async () => {
-  const gltf = await loadFile('/tesla_2018_model_3/scene.gltf');
+  const gltf = await loadFile('./tesla_2018_model_3/scene.gltf');
   setCamera();
   setLight();
   console.log(setFloor);
