@@ -24,13 +24,13 @@
         @keyup.enter="initConnect"
       ></el-input>
       <el-button type="primary" @click="initConnect">加入</el-button>
+      <el-button :type="isAudioOpen ? 'warning' : 'primary'" @click="handleMic">
+        {{ isAudioOpen ? '关闭' : '打开' }}麦克风
+      </el-button>
       <el-button :type="cameraOpen ? 'warning' : 'primary'" @click="handleCamera"
         >{{ cameraOpen ? '关闭' : '打开' }}视频</el-button
       >
       <el-button type="danger" @click="handleLeave">离开</el-button>
-      <!-- <el-button :type="cameraOpen ? 'warning' : 'primary'" @click="handleMic">
-        {{ cameraOpen ? '关闭' : '打开' }}麦克风
-      </el-button> -->
       <!--   <el-button type="primary" @click="createAnswer(offerSdp)">
         创建answer
       </el-button>
@@ -42,8 +42,6 @@
 import { ref, onMounted } from 'vue';
 import { ElMessage } from 'element-plus';
 import io, { Socket } from 'socket.io-client';
-// import VConsole from 'vconsole';
-// const vConsole = new VConsole();
 const peerConnection = new RTCPeerConnection({
   iceServers: [
     {
@@ -123,7 +121,7 @@ const init = async () => {
   const remoteVideo = document.getElementById('remote-video') as HTMLVideoElement;
   localStream = await navigator.mediaDevices.getUserMedia({
     video: true,
-    audio: false,
+    audio: true,
   });
   remoteStream = new MediaStream();
   localVideo.srcObject = localStream;
@@ -193,13 +191,13 @@ function handleCamera() {
   });
 }
 // // 开关麦克风
-// const isAudioOpen = ref(true)
-// function handleMic() {
-//   localStream.getAudioTracks().forEach((track) => {
-//     track.stop()
-//   })
-//   isAudioOpen.value = !isAudioOpen.value
-// }
+const isAudioOpen = ref(true);
+function handleMic() {
+  localStream.getAudioTracks().forEach((track) => {
+    track.stop();
+  });
+  isAudioOpen.value = !isAudioOpen.value;
+}
 // 离开房间
 function handleLeave() {
   // 关闭对等连接

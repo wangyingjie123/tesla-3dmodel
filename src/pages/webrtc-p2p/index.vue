@@ -1,38 +1,33 @@
 <template>
   <el-container>
-    <el-header class="p2p-header">Webrtc-P2P通话</el-header>
+    <el-header class="p2p-header">
+      <el-text type="warning" size="large">Webrtc-P2P通话</el-text>
+      <el-button @click="drawer = true" type="primary">打开操作面板</el-button>
+    </el-header>
     <el-main>
       <el-row>
-        <el-col :span="16">
-          <el-row>
-            <!-- 给自己本地的视频播放设置静音，防止产生回音 -->
-            <el-col :span="12" class="p2p-video">
-              <h2 class="p2p-subtitle margin-bottom-10">本地摄像头</h2>
-              <video class="p2p-video__dom" ref="localRef" autoplay playsinline muted></video>
-            </el-col>
-            <el-col :span="12" class="p2p-video">
-              <h2 class="p2p-subtitle margin-bottom-10">用户2摄像头</h2>
-              <video class="p2p-video__dom" ref="remoteRef" autoplay playsinline></video>
-            </el-col>
-          </el-row>
+        <!-- 给自己本地的视频播放设置静音，防止产生回音 -->
+        <el-col :span="12" class="p2p-video">
+          <h2 class="p2p-subtitle margin-bottom-10">本地摄像头</h2>
+          <video class="p2p-video__dom" ref="localRef" autoplay playsinline muted></video>
         </el-col>
-        <el-col :span="8">
-          <el-collapse v-model="activeNames">
-            <el-collapse-item title="本地操作区域-打开2个tab页" name="1">
-              <OfferForm
-                :localOffer="localOffer"
-                :remoteAnswer="remoteAnswer"
-                @createOffer="createOffer"
-                @createAnswer="createAnswer"
-                @addAnswer="addAnswer"
-              ></OfferForm>
-            </el-collapse-item>
-          </el-collapse>
+        <el-col :span="12" class="p2p-video">
+          <h2 class="p2p-subtitle margin-bottom-10">用户2摄像头</h2>
+          <video class="p2p-video__dom" ref="remoteRef" autoplay playsinline></video>
         </el-col>
       </el-row>
     </el-main>
     <el-footer></el-footer>
   </el-container>
+  <el-drawer v-model="drawer" title="本地操作区域-打开2个tab页">
+    <OfferForm
+      :localOffer="localOffer"
+      :remoteAnswer="remoteAnswer"
+      @createOffer="createOffer"
+      @createAnswer="createAnswer"
+      @addAnswer="addAnswer"
+    ></OfferForm>
+  </el-drawer>
 </template>
 <script setup lang="ts">
 import 'webrtc-adapter';
@@ -40,10 +35,10 @@ import { ref, onMounted } from 'vue';
 import OfferForm from './offer-form.vue';
 const localRef = ref<HTMLVideoElement>();
 const remoteRef = ref<HTMLVideoElement>();
-const activeNames = ref('');
 // 创建本地/远程 SDP 描述, 用于描述本地/远程的媒体流
 const localOffer = ref('');
 const remoteAnswer = ref('');
+const drawer = ref(false);
 const pc = new RTCPeerConnection({
   iceServers: [
     {
@@ -130,9 +125,9 @@ onMounted(() => {
   &-header {
     background-color: var(--el-color-primary-light-7);
     color: var(--el-text-color-primary);
-    text-align: center;
-    font-size: var(--el-font-size-medium);
-    line-height: var(--el-header-height);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
   }
   &-footer {
     background-color: var(--el-color-primary-light-7);
@@ -144,7 +139,10 @@ onMounted(() => {
   &-video {
     text-align: center;
     &__dom {
-      width: 480px;
+      width: 560px;
+      aspect-ratio: 16/9;
+      object-fit: contain;
+      background-color: #000;
     }
   }
 }

@@ -46,7 +46,7 @@
         <p class="margin-top-10">将用户2生成的SDP answer粘贴到下方，然后点击add answer</p>
       </div>
     </template>
-    <el-input placeholder="请粘贴用户1 SDP offer" v-model="remoteAnswerCopy" clearable class="input-with-select">
+    <el-input placeholder="请粘贴用户2 SDP answer" v-model="remoteAnswerCopy" clearable class="input-with-select">
       <template #append>
         <el-button @click="emit('addAnswer', remoteAnswerCopy)" :disabled="!remoteAnswerCopy">add answer</el-button>
       </template>
