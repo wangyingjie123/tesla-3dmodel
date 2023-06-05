@@ -44,7 +44,13 @@ const activeNames = ref('');
 // 创建本地/远程 SDP 描述, 用于描述本地/远程的媒体流
 const localOffer = ref('');
 const remoteAnswer = ref('');
-const pc = new RTCPeerConnection();
+const pc = new RTCPeerConnection({
+  iceServers: [
+    {
+      urls: 'stun:stun.voipbuster.com',
+    },
+  ],
+});
 // 初始化
 const init = async () => {
   // 获取本地端视频标签
