@@ -51,7 +51,8 @@ const peerConnection = ref<RTCPeerConnection>(
   new RTCPeerConnection({
     iceServers: [
       {
-        urls: 'stun:1.119.169.85:10042', // stun:stun.voipbuster.com
+        urls: 'stun:stun.voipbuster.com',
+        // urls: 'stun:172.16.40.202:3478',
       },
     ],
   })

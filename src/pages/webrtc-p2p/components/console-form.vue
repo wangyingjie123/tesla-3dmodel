@@ -25,7 +25,7 @@
       :icon="isCameraOpen ? VideoPause : VideoPlay"
       >{{ isCameraOpen ? '关闭' : '打开' }}视频</el-button
     >
-    <el-button type="danger" @click="handleLeave" :disabled="btnDiabled">关闭通信</el-button>
+    <el-button type="danger" @click="handleLeave" :disabled="btnDiabled">关闭会话</el-button>
     <el-popover placement="bottom" title="指令面板" :width="500" trigger="click">
       <el-input v-model="textarea" readonly placeholder="Please input" :rows="6" show-word-limit type="textarea" />
       <template #reference>
