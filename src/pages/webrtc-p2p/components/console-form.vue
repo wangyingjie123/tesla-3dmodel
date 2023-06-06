@@ -10,10 +10,19 @@
       @keyup.enter="sendInstruction"
     ></el-input>
     <el-button type="primary" @click="sendInstruction" :disabled="btnDiabled">发送指令</el-button>
-    <el-button :type="isAudioOpen ? 'warning' : 'primary'" @click="handleAudio" :disabled="btnDiabled">
+    <el-button
+      :type="isAudioOpen ? 'warning' : 'primary'"
+      @click="handleAudio"
+      :disabled="btnDiabled"
+      :icon="isAudioOpen ? Mute : Microphone"
+    >
       {{ isAudioOpen ? '关闭' : '打开' }}麦克风
     </el-button>
-    <el-button :type="isCameraOpen ? 'warning' : 'primary'" @click="handleCamera" :disabled="btnDiabled"
+    <el-button
+      :type="isCameraOpen ? 'warning' : 'primary'"
+      @click="handleCamera"
+      :disabled="btnDiabled"
+      :icon="isCameraOpen ? VideoPause : VideoPlay"
       >{{ isCameraOpen ? '关闭' : '打开' }}视频</el-button
     >
     <el-button type="danger" @click="handleLeave" :disabled="btnDiabled">关闭通信</el-button>
@@ -27,6 +36,7 @@
 </template>
 <script setup lang="ts">
 import { ref } from 'vue';
+import { Mute, Microphone, VideoPause, VideoPlay } from '@element-plus/icons-vue';
 const props = defineProps({
   localStream: {
     type: MediaStream,

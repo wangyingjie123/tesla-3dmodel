@@ -81,7 +81,7 @@ const init = async () => {
   });
   // 先禁用音频
   localStream.value.getAudioTracks().forEach((track) => {
-    track.enabled = true;
+    track.enabled = false;
   });
   // 监听文本信息
   peerConnection.value.ondatachannel = function (event) {
