@@ -39,7 +39,7 @@
 </template>
 <script setup lang="ts">
 import 'webrtc-adapter';
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import { ElMessage } from 'element-plus';
 import OfferForm from './components/offer-form.vue';
 import ConsoleForm from './components/console-form.vue';
@@ -82,7 +82,7 @@ const init = async () => {
   const remoteVideo = remoteRef.value!;
   // 采集本地媒体流
   localStream.value = await navigator.mediaDevices.getUserMedia({
-    video: true,
+    video: { width: 1280, height: 720 },
     audio: true,
   });
   // 设置本地视频流
@@ -96,11 +96,11 @@ const init = async () => {
     track.enabled = false;
   });
   // 监听文本信息
-  peerConnection.value.ondatachannel = function (event) {
+  peerConnection.value.ondatachannel = (event) => {
     ElMessage.success('建立连接');
     btnDiabled.value = false;
     const channel = event.channel;
-    channel.onopen = function () {
+    channel.onopen = () => {
       channel.send('建立连接!');
     };
     channel.onmessage = (event) => {
@@ -161,6 +161,14 @@ const addAnswer = async (remoteAnswer: string) => {
 };
 onMounted(() => {
   init();
+});
+onUnmounted(() => {
+  localStream.value.getTracks().forEach((track) => {
+    track.stop();
+  });
+
+  // 关闭peerConnection
+  peerConnection.value.close();
 });
 </script>
 <style scoped lang="scss">

@@ -39,7 +39,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, onUnmounted } from 'vue';
 import { ElMessage } from 'element-plus';
 import io, { Socket } from 'socket.io-client';
 const peerConnection = new RTCPeerConnection({
@@ -200,6 +200,10 @@ function handleMic() {
 }
 // 离开房间
 function handleLeave() {
+  // 关闭本地媒体
+  localStream.getTracks().forEach((track) => {
+    track.stop();
+  });
   // 关闭对等连接
   peerConnection.close();
   // 发送离开的消息
@@ -209,6 +213,9 @@ function handleLeave() {
 }
 onMounted(() => {
   init();
+});
+onUnmounted(() => {
+  handleLeave();
 });
 </script>
 <style lang="scss" scoped>

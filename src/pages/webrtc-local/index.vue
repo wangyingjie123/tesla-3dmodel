@@ -130,8 +130,8 @@ onMounted(() => {
 });
 
 onUnmounted(() => {
-  localStream.getVideoTracks().forEach((track) => {
-    track.enabled = false;
+  localStream.getTracks().forEach((track) => {
+    track.stop();
   });
 });
 </script>

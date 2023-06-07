@@ -70,6 +70,9 @@ const sendInstruction = () => {
 };
 // 关闭连接
 const handleLeave = () => {
+  props.localStream.getTracks().forEach((track) => {
+    track.stop();
+  });
   props.peerConnection.close();
 };
 // 打开/关闭麦克风

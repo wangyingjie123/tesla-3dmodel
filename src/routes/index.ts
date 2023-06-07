@@ -13,12 +13,12 @@ export const routes = [
     title: 'webrtc',
     component: Layout,
     children: [
-      { path: 'local', component: () => import('@/pages/webrtc-local/index.vue'), title: '本地摄像头' },
-      { path: 'p2p', component: () => import('@/pages/webrtc-p2p/index.vue'), title: 'webrtc本地通话' },
+      { path: 'local', component: () => import('@/pages/webrtc-local/index.vue'), title: '本地媒体获取' },
+      { path: 'p2p', component: () => import('@/pages/webrtc-p2p/index.vue'), title: '手动创建会话' },
       {
         path: 'p2p-remote',
         component: () => import('@/pages/webrtc-p2p/p2p-remote.vue'),
-        title: 'https远程通话',
+        title: '加入房间自动创建会话',
       },
       { path: 'rtc-player', component: () => import('@/pages/webrtc-player/index.vue'), title: 'webrtc播放视频流' },
     ],
@@ -31,7 +31,6 @@ export const routes = [
       { path: 'home-3d', component: () => import('@/pages/three-model/home-3d.vue'), title: 'threejs-全景房屋' },
       { path: 'home-view', component: () => import('@/pages/three-model/home-view.vue'), title: 'threejs-房屋预览' },
       { path: 'cyberpunk-3d', component: () => import('@/pages/three-model/cyberpunk.vue'), title: 'threejs-赛博朋克' },
-      { path: 'puzzle-3d', component: () => import('@/pages/three-model/puzzle.vue'), title: 'threejs-球体拼图' },
     ],
   },
   {
