@@ -17,7 +17,7 @@ export const routes = [
       { path: 'p2p', component: () => import('@/pages/webrtc-p2p/index.vue'), title: '手动创建会话' },
       {
         path: 'p2p-remote',
-        component: () => import('@/pages/webrtc-p2p/p2p-remote.vue'),
+        component: () => import('@/pages/webrtc-p2p/single-remote.vue'),
         title: '加入房间自动创建会话',
       },
       { path: 'rtc-player', component: () => import('@/pages/webrtc-player/index.vue'), title: 'webrtc播放视频流' },
