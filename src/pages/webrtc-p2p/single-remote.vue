@@ -54,6 +54,7 @@ const dataChannel = ref<RTCDataChannel>(
   peerConnection.value.createDataChannel('message', { ordered: false, maxRetransmits: 0 })
 );
 const localStream = ref<MediaStream>(new MediaStream());
+const consoleRef = ref<{ writeInfo: (info: string) => void }>();
 const roomId = ref('');
 const btnDiabled = ref(true);
 let socket: WebSocketClient;
@@ -110,15 +111,17 @@ const init = async () => {
   localStream.value.getAudioTracks().forEach((track) => {
     track.enabled = false;
   });
-  dataChannel.value.onopen = () => {
-    console.log('Data channel opened!');
+  // 接收到服务端的消息
+  dataChannel.value.onmessage = (event) => {
+    consoleRef.value?.writeInfo(`接收到的指令：${event.data}`);
   };
   peerConnection.value.ondatachannel = (event) => {
     ElMessage.success('建立连接');
     btnDiabled.value = false;
     const channel = event.channel;
     channel.onopen = () => {
-      channel.send('建立连接!');
+      console.log('建立连接!');
+      // channel.send('建立连接!');
     };
     channel.onmessage = (event) => {
       console.log(event.data);
