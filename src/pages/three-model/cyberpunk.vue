@@ -38,8 +38,8 @@ import { ref, onMounted } from 'vue';
 import * as THREE from 'three';
 import * as dat from 'dat.gui';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import { TWEEN } from 'three/examples/jsm/libs/tween.module.min.js';
-import { mergeBufferGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils';
+import { Tween, update } from 'three/examples/jsm/libs/tween.module.js';
+import { mergeGeometries } from 'three/examples/jsm/utils/BufferGeometryUtils';
 import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
 import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { GlitchPass } from 'three/examples/jsm/postprocessing/GlitchPass.js';
@@ -167,10 +167,10 @@ const initThree = () => {
         const speed = 3;
         const len = path.geometry.attributes.lineDistance.array[99];
         const dur = len / speed;
-        const tweenTrail = new TWEEN.Tween({ value: 0 }).to({ value: 1 }, dur * 1000).onUpdate((val) => {
+        const tweenTrail = new Tween({ value: 0 }).to({ value: 1 }, dur * 1000).onUpdate((val) => {
           impacts[i].trailRatio.value = val.value;
         });
-        const tweenImpact = new TWEEN.Tween({ value: 0 })
+        const tweenImpact = new Tween({ value: 0 })
           .to({ value: 1 }, randInt(2500, 5000))
           .onUpdate((val) => {
             uniforms.impacts.value[i].impactRatio = val.value;
@@ -223,7 +223,7 @@ const initThree = () => {
 
   // 页面重绘动画
   renderer.setAnimationLoop(() => {
-    TWEEN.update();
+    update();
     earth.rotation.y += 0.001;
     renderer.render(scene, camera);
     renderGlithPass.value && composer.render();
@@ -280,7 +280,7 @@ const initThree = () => {
       g.setAttribute('baseUv', new THREE.Float32BufferAttribute(uvs, 2));
       geoms.push(g);
     }
-    const g = mergeBufferGeometries(geoms);
+    const g = mergeGeometries(geoms);
     const m = new THREE.MeshBasicMaterial({
       color: new THREE.Color(params.colors.base),
       onBeforeCompile: (shader) => {

@@ -19,7 +19,7 @@
         <label class="operation-label">房间号：</label>
         <el-input
           v-model="roomId"
-          style="width: 150px; margin-right: 20px"
+          style="width: 200px; margin-right: 20px"
           placeholder="要加入的房间号"
           clearable
           @keyup.enter="initConnect"
@@ -67,7 +67,7 @@ const onMessageCallback = (wsMessage: string) => {
       const answer = new RTCSessionDescription(message.payload);
       addAnswer(answer);
     } else if (message.type === 'candidate') {
-      // addIceCandidate(new RTCIceCandidate(message.payload));
+      addIceCandidate(new RTCIceCandidate(message.payload));
     }
   } catch (e) {
     console.error(e);
@@ -79,7 +79,7 @@ const initConnect = () => {
     return;
   }
   socket = new WebSocketClient({
-    wsuri: 'ws://10.1.60.209:8080',
+    wsuri: `ws://${roomId.value.trim()}`,
     onMessageCallback,
     onOpenCallback: createOffer,
   });
@@ -151,13 +151,13 @@ async function addAnswer(answerSdp: RTCSessionDescription) {
   socket.destory();
 }
 // 添加ice代理
-// async function addIceCandidate(candidate: RTCIceCandidate) {
-//   try {
-//     await peerConnection.value.addIceCandidate(candidate);
-//   } catch (e) {
-//     console.error(e);
-//   }
-// }
+async function addIceCandidate(candidate: RTCIceCandidate) {
+  try {
+    await peerConnection.value.addIceCandidate(candidate);
+  } catch (e) {
+    console.error(e);
+  }
+}
 
 // 离开房间
 function handleLeave() {

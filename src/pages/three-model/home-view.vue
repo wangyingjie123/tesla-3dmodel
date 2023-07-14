@@ -52,13 +52,18 @@
 </template>
 <script setup>
 import { onMounted, reactive, computed, onUnmounted } from 'vue';
+import { ElMessage } from 'element-plus';
 import * as THREE from 'three';
-import { TWEEN } from 'three/examples/jsm/libs/tween.module.min.js';
+import { update } from 'three/examples/jsm/libs/tween.module.js';
 import { OrbitControls } from '@/utils/orbit-controls';
 import Animations from '@/utils/animations';
-import { sleep, toast } from '@/utils/ui-component';
 import { rooms, resourceList } from './home-data';
 import Progress from '@/components/progress.vue';
+
+const sleep = (duration) =>
+  new Promise((resolve) => {
+    setTimeout(resolve, duration);
+  });
 
 const data = reactive({
   renderer: null,
@@ -184,7 +189,7 @@ const initScene = () => {
       }
     }
     controls && controls.update();
-    TWEEN && TWEEN.update();
+    update();
     // 更新渲染器
     renderer.render(scene, camera);
     // 页面重绘时调用自身
@@ -208,7 +213,7 @@ const handleSwitchButtonClick = async (key) => {
 };
 // 点击交互点
 const handleReactivePointClick = (point) => {
-  toast(`您点击了${point.value}`);
+  ElMessage.success(`您点击了${point.value}`);
 };
 onMounted(() => {
   sizes.width = window.innerWidth;

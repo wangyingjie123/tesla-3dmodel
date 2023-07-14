@@ -77,7 +77,9 @@ const handleStartButtonClick = () => {
           left: 0;
           position: absolute;
           right: 0;
-          text-shadow: -3px -3px 0 #f8f005, 3px 3px 0 #00e6f6;
+          text-shadow:
+            -3px -3px 0 #f8f005,
+            3px 3px 0 #00e6f6;
           top: 0;
         }
       }

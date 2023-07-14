@@ -1,9 +1,9 @@
-import { TWEEN } from 'three/examples/jsm/libs/tween.module.min.js';
+import { Tween, Easing } from 'three/examples/jsm/libs/tween.module.js';
 
 const Animations = {
   // 相机移动实现漫游等动画
   animateCamera: (camera, controls, newP, newT, time = 2000, callBack) => {
-    const tween = new TWEEN.Tween({
+    const tween = new Tween({
       x1: camera.position.x, // 相机x
       y1: camera.position.y, // 相机y
       z1: camera.position.z, // 相机z
@@ -36,7 +36,7 @@ const Animations = {
       controls.update();
       callBack();
     });
-    tween.easing(TWEEN.Easing.Cubic.InOut);
+    tween.easing(Easing.Cubic.InOut);
     tween.start();
   },
 };
