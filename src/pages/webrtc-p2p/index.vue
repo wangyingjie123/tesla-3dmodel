@@ -23,6 +23,7 @@
         :peerConnection="peerConnection"
         :dataChannel="dataChannel"
         :btnDiabled="btnDiabled"
+        :experiment="true"
         ref="consoleRef"
       ></ConsoleForm>
     </el-footer>
