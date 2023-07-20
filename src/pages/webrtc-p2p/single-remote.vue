@@ -19,12 +19,12 @@
     <el-row class="operation" :gutter="20">
       <el-col :span="12">
         <el-card class="box-card">
-          <label class="operation-label">websocket连接地址：</label>
+          <label class="operation-label">连接地址：</label>
           <el-input
             v-model="roomId"
             :disabled="!btnDiabled"
             style="width: 200px; margin-right: 20px"
-            placeholder="如10.1.60.209:9012"
+            placeholder="请输入完整wesocket地址"
             clearable
             @keyup.enter="initConnect"
           ></el-input>
@@ -74,19 +74,17 @@ const onMessageCallback = (wsMessage: string) => {
 };
 // websocket连接
 const initConnect = () => {
-  if (!roomId.value) {
-    ElMessage.error('请输入房间号');
+  const regExp = /^(ws:\/\/|wss:\/\/)[A-Za-z0-9\-._~:/?#[\]@!$&'()*+,;=]+$/;
+  const wsuri = roomId.value.trim();
+  if (!regExp.test(wsuri)) {
+    ElMessage.error('请输入正确的websocket地址');
     return;
   }
   socket = new WebSocketClient({
-    // wsuri: `ws://${roomId.value.trim()}`,
-    wsuri: `ws://10.1.60.209:9012`,
+    wsuri,
+    // wsuri: `ws://10.1.60.209:9012`,
     onMessageCallback,
     onOpenCallback: () => {
-      // if (localStreamInited) {
-      //   initLocalStream();
-      // }
-      // localStreamInited = true;
       initp2p();
       createOffer();
     },
