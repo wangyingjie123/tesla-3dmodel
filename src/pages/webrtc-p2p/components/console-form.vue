@@ -1,9 +1,9 @@
 <template>
   <el-card class="box-card">
-    <label class="operation-label">指令：</label>
+    <label class="operation-label">文本指令：</label>
     <el-input
       v-model="instruction"
-      style="width: 200px; margin-right: 20px"
+      style="width: 200px; margin-right: 10px"
       placeholder="要发送的指令"
       clearable
       :disabled="btnDiabled"
@@ -11,18 +11,18 @@
     ></el-input>
     <el-button type="primary" @click="sendInstruction" :disabled="btnDiabled">发送指令</el-button>
     <el-button
-      :type="isAudioOpen ? 'warning' : 'primary'"
-      @click="handleAudio"
+      :type="isAudioOpen ? 'success' : 'primary'"
+      @click="handleMedia('audio')"
       :disabled="btnDiabled"
       :icon="isAudioOpen ? Mute : Microphone"
     >
       {{ isAudioOpen ? '关闭' : '打开' }}麦克风
     </el-button>
     <el-button
-      :type="isCameraOpen ? 'warning' : 'primary'"
-      @click="handleCamera"
-      :icon="isCameraOpen ? VideoPause : VideoPlay"
-      >{{ isCameraOpen ? '关闭' : '打开' }}本地视频</el-button
+      :type="isVideoOpen ? 'success' : 'primary'"
+      @click="handleMedia('video')"
+      :icon="isVideoOpen ? VideoPause : VideoPlay"
+      >{{ isVideoOpen ? '关闭' : '打开' }}本地视频</el-button
     >
     <el-popover placement="bottom" title="指令面板" :width="500" trigger="click">
       <el-input v-model="textarea" readonly placeholder="Please input" :rows="6" show-word-limit type="textarea" />
@@ -35,7 +35,7 @@
   </el-card>
 </template>
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, computed } from 'vue';
 import { Mute, Microphone, VideoPause, VideoPlay } from '@element-plus/icons-vue';
 interface Props {
   localStream: MediaStream;
@@ -43,16 +43,20 @@ interface Props {
   peerConnection: RTCPeerConnection | null;
   btnDiabled: boolean;
   experiment: boolean;
+  mediaDevices: Record<'audio' | 'video', boolean>;
 }
 const props = defineProps<Props>();
-
+const emits = defineEmits<{
+  (e: 'handleAudio', flag: boolean): void;
+  (e: 'handleVideo', flag: boolean): void;
+}>();
 const instruction = ref('');
 const textarea = ref('');
-const isAudioOpen = ref(false);
-const isCameraOpen = ref(true);
 
 let recognition: any;
 
+const isAudioOpen = computed(() => props.mediaDevices.audio);
+const isVideoOpen = computed(() => props.mediaDevices.video);
 const writeInfo = (info: string) => {
   textarea.value += `${info}\n`;
 };
@@ -64,29 +68,19 @@ const sendInstruction = () => {
   writeInfo(`发送指令：${instruction.value}`);
   instruction.value = '';
 };
-
-// 打开/关闭麦克风
-const handleAudio = () => {
-  isAudioOpen.value = !isAudioOpen.value;
-  props.localStream.getAudioTracks().forEach((track) => {
-    track.enabled = isAudioOpen.value;
-  });
-};
-// 打开/关闭摄像头
-const handleCamera = () => {
-  isCameraOpen.value = !isCameraOpen.value;
-  props.localStream.getVideoTracks().forEach((track) => {
-    track.enabled = isCameraOpen.value;
-  });
-};
 // 还原设置
 const reduction = () => {
   textarea.value = '';
-  isAudioOpen.value = false;
-  props.localStream.getAudioTracks().forEach((track) => {
-    track.enabled = false;
-  });
+  emits('handleAudio', false);
 };
+const handleMedia = (media: 'audio' | 'video') => {
+  if (media === 'audio') {
+    emits('handleAudio', !props.mediaDevices.audio);
+  } else {
+    emits('handleVideo', !props.mediaDevices.video);
+  }
+};
+// 语音转文字-实验中功能
 onMounted(() => {
   if ('webkitSpeechRecognition' in window) {
     // eslint-disable-next-line no-undef, @typescript-eslint/ban-ts-comment

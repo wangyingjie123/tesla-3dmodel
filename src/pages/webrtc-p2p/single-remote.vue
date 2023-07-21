@@ -1,5 +1,3 @@
-<!-- eslint-disable no-undef -->
-<!-- eslint-disable no-undef -->
 <template>
   <div class="p2p-container">
     <el-row class="p2p-container__row">
@@ -16,29 +14,35 @@
         </div>
       </el-col>
     </el-row>
-    <el-row class="operation" :gutter="20">
-      <el-col :span="12">
+    <el-row class="operation">
+      <el-col :span="24" class="margin-bottom-10">
         <el-card class="box-card">
           <label class="operation-label">连接地址：</label>
           <el-input
             v-model="roomId"
             :disabled="!btnDiabled"
-            style="width: 200px; margin-right: 20px"
+            style="width: 200px; margin-right: 10px"
             placeholder="请输入完整wesocket地址"
             clearable
-            @keyup.enter="initConnect"
+            @keyup.enter="setupConnect"
           ></el-input>
-          <el-button type="primary" @click="initConnect" :disabled="!btnDiabled">加入</el-button>
+          <el-button type="primary" @click="setupConnect" :disabled="!btnDiabled">加入</el-button>
           <el-button type="danger" @click="handleLeave" :disabled="btnDiabled">关闭连接</el-button>
+          <el-select v-model="audioDeviceId" @change="switchAudio" placeholder="Select" class="margin-left-10">
+            <el-option v-for="item in options" :key="item.deviceId" :label="item.label" :value="item.deviceId" />
+          </el-select>
         </el-card>
       </el-col>
-      <el-col :span="12">
+      <el-col :span="24">
         <ConsoleForm
           :localStream="localStream"
           :peerConnection="peerConnection"
           :dataChannel="dataChannel"
           :btnDiabled="btnDiabled"
+          :mediaDevices="mediaDevices"
           :experiment="false"
+          @handleAudio="handleAudio"
+          @handleVideo="handleVideo"
           ref="consoleRef"
         ></ConsoleForm>
       </el-col>
@@ -46,7 +50,7 @@
   </div>
 </template>
 <script setup lang="ts">
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted, onUnmounted, reactive } from 'vue';
 import { ElMessage } from 'element-plus';
 import { WebSocketClient } from '@/utils/websocket';
 import ConsoleForm from './components/console-form.vue';
@@ -55,8 +59,13 @@ const dataChannel = ref<RTCDataChannel | null>(null);
 const localStream = ref<MediaStream>(new MediaStream());
 const consoleRef = ref<{ writeInfo: (info: string) => void; reduction: () => void }>();
 const roomId = ref('');
+const options = ref<MediaDeviceInfo[]>([]);
+const audioDeviceId = ref('');
+const mediaDevices = reactive<Record<'audio' | 'video', boolean>>({ audio: true, video: true });
+
 const btnDiabled = ref(true);
 let socket: WebSocketClient;
+let iceConnectionState: RTCIceConnectionState = 'closed';
 
 const onMessageCallback = (wsMessage: string) => {
   try {
@@ -73,16 +82,17 @@ const onMessageCallback = (wsMessage: string) => {
   }
 };
 // websocket连接
-const initConnect = () => {
-  const regExp = /^(ws:\/\/|wss:\/\/)[A-Za-z0-9\-._~:/?#[\]@!$&'()*+,;=]+$/;
-  const wsuri = roomId.value.trim();
-  if (!regExp.test(wsuri)) {
-    ElMessage.error('请输入正确的websocket地址');
-    return;
-  }
+const setupConnect = () => {
+  // const regExp = /^(ws:\/\/|wss:\/\/)[A-Za-z0-9\-._~:/?#[\]@!$&'()*+,;=]+$/;
+  // const wsuri = roomId.value.trim();
+  // if (!regExp.test(wsuri)) {
+  //   ElMessage.error('请输入正确的websocket地址');
+  //   return;
+  // }
   socket = new WebSocketClient({
-    wsuri,
-    // wsuri: `ws://10.1.60.209:9012`,
+    // wsuri,
+    wsuri: `ws://10.1.60.209:9012`,
+    // wsuri: 'ws://10.1.49.170:9012',
     onMessageCallback,
     onOpenCallback: () => {
       initp2p();
@@ -92,18 +102,20 @@ const initConnect = () => {
   roomId.value = '';
 };
 // 初始化本地媒体
-const initLocalStream = async () => {
+const initLocalStream = async (deviceId: string) => {
   const localVideo = document.getElementById('local-video') as HTMLVideoElement;
   localStream.value = await navigator.mediaDevices.getUserMedia({
     video: { width: 1280, height: 720 },
-    audio: true,
+    audio: { deviceId: { exact: deviceId } },
   });
   localVideo.srcObject = localStream.value;
-  // 先禁用音频
-  localStream.value.getAudioTracks().forEach((track) => {
-    track.enabled = false;
-  });
+  // 监听设备变化
+  navigator.mediaDevices.ondevicechange = async () => {
+    await getDevices();
+    await switchAudio();
+  };
 };
+// 初始化peerConnection
 const initp2p = () => {
   const remoteVideo = document.getElementById('remote-video') as HTMLVideoElement;
   peerConnection.value = new RTCPeerConnection({
@@ -124,20 +136,29 @@ const initp2p = () => {
     event.streams[0].getTracks().forEach((track) => {
       remoteStream.addTrack(track);
     });
-    // 设置远程视频流
     remoteVideo.srcObject = remoteStream;
+  };
+  // 监听连接状态变化
+  peerConnection.value.oniceconnectionstatechange = () => {
+    const connectionState = peerConnection.value?.iceConnectionState;
+    console.log('peerConnection 状态:', connectionState);
+    iceConnectionState = connectionState as RTCIceConnectionState;
+    // 当连接状态为 disconnected 或者 failed 时，表明连接已断开
+    if (connectionState === 'disconnected' || connectionState === 'failed') {
+      // 连接已断开，执行相应的处理逻辑
+      console.log('peerConnection 远程连接已断开');
+    }
   };
   // 接收到服务端的消息
   dataChannel.value.onmessage = (event) => {
     consoleRef.value?.writeInfo(`接收到的指令：${event.data}`);
   };
   peerConnection.value.ondatachannel = (event) => {
-    ElMessage.success('建立连接');
+    ElMessage.success('已建立p2p连接');
     btnDiabled.value = false;
     const channel = event.channel;
     channel.onopen = () => {
-      console.log('建立连接!');
-      // channel.send('建立连接!');
+      channel.send('建立连接!');
     };
     channel.onmessage = (event) => {
       console.log(event.data);
@@ -174,7 +195,60 @@ async function addIceCandidate(candidate: RTCIceCandidate) {
     // console.error(e);
   }
 }
-
+// 获取设备列表
+async function getDevices() {
+  const devices = await navigator.mediaDevices.enumerateDevices();
+  const videoDevices = devices.filter((device) => device.kind === 'audioinput');
+  options.value = videoDevices;
+  audioDeviceId.value = videoDevices[0].deviceId;
+  console.log('🎤🎤🎤 / 麦克风列表', videoDevices);
+}
+// 切换麦克风
+const switchAudio = async () => {
+  try {
+    // Get the current audio track from the local stream
+    const audioTrack = localStream.value.getAudioTracks()[0];
+    // Stop the current microphone track
+    audioTrack.stop();
+    // Get a new audio track from a different microphone
+    await initLocalStream(audioDeviceId.value);
+    if (mediaDevices.audio === false) {
+      handleAudio(false);
+    }
+    if (mediaDevices.video === false) {
+      handleVideo(false);
+    }
+    const newAudioTrack = localStream.value.getAudioTracks()[0];
+    // Replace the old audio track with the new one in the local stream
+    localStream.value.removeTrack(audioTrack);
+    localStream.value.addTrack(newAudioTrack);
+    // Get the RTCPeerConnection and transceiver (your existing setup)
+    if (iceConnectionState === 'connected') {
+      const audioTransceiver = peerConnection.value
+        ?.getTransceivers()
+        .find((transceiver) => transceiver.sender.track?.kind === 'audio');
+      // Replace the old audio track with the new one in the transceiver
+      audioTransceiver?.sender.replaceTrack(newAudioTrack);
+    }
+    console.log('麦克风切换成功!');
+  } catch (error) {
+    console.error('Error switching microphone:', error);
+  }
+};
+// 打开/关闭麦克风
+const handleAudio = (flag: boolean) => {
+  mediaDevices.audio = flag;
+  localStream.value.getAudioTracks().forEach((track) => {
+    track.enabled = flag;
+  });
+};
+// 打开/关闭摄像头
+const handleVideo = (flag: boolean) => {
+  mediaDevices.video = flag;
+  localStream.value.getVideoTracks().forEach((track) => {
+    track.enabled = flag;
+  });
+};
 // 离开房间
 function handleLeave() {
   // 关闭本地媒体
@@ -186,7 +260,10 @@ function handleLeave() {
   consoleRef.value?.reduction();
 }
 onMounted(() => {
-  initLocalStream();
+  getDevices().then(() => {
+    initLocalStream(audioDeviceId.value);
+    handleAudio(false);
+  });
 });
 onUnmounted(() => {
   handleLeave();
@@ -196,7 +273,7 @@ onUnmounted(() => {
 $video-width: 540px;
 .p2p-container {
   height: 100%;
-  min-width: 1600px;
+  min-width: 1200px;
   display: flex;
   justify-content: space-between;
   flex-direction: column;
@@ -204,6 +281,8 @@ $video-width: 540px;
   &__row {
     width: 100%;
     background-color: #000;
+    border-top-left-radius: 8px;
+    border-top-right-radius: 8px;
     flex: 1;
   }
   .video {
@@ -238,11 +317,10 @@ $video-width: 540px;
 
   .operation {
     width: 100%;
-    height: 100px;
+    padding: 10px;
     background-color: #405982;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+    border-bottom-left-radius: 8px;
+    border-bottom-right-radius: 8px;
   }
 }
 </style>

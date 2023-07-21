@@ -23,7 +23,10 @@
         :peerConnection="peerConnection"
         :dataChannel="dataChannel"
         :btnDiabled="btnDiabled"
+        :mediaDevices="mediaDevices"
         :experiment="true"
+        @handleAudio="handleAudio"
+        @handleVideo="handleVideo"
         ref="consoleRef"
       ></ConsoleForm>
     </el-footer>
@@ -40,7 +43,7 @@
 </template>
 <script setup lang="ts">
 import 'webrtc-adapter';
-import { ref, onMounted, onUnmounted } from 'vue';
+import { ref, onMounted, onUnmounted, reactive } from 'vue';
 import { ElMessage } from 'element-plus';
 import OfferForm from './components/offer-form.vue';
 import ConsoleForm from './components/console-form.vue';
@@ -75,6 +78,8 @@ const localOffer = ref('');
 const remoteAnswer = ref('');
 const drawer = ref(false);
 const btnDiabled = ref(true);
+
+const mediaDevices = reactive<Record<'audio' | 'video', boolean>>({ audio: true, video: true });
 // 初始化
 const init = async () => {
   // 获取本地端视频标签
@@ -159,6 +164,21 @@ const addAnswer = async (remoteAnswer: string) => {
   if (!peerConnection.value.currentRemoteDescription) {
     peerConnection.value.setRemoteDescription(answer);
   }
+};
+
+// 打开/关闭麦克风
+const handleAudio = (flag: boolean) => {
+  mediaDevices.audio = flag;
+  localStream.value.getAudioTracks().forEach((track) => {
+    track.enabled = flag;
+  });
+};
+// 打开/关闭摄像头
+const handleVideo = (flag: boolean) => {
+  mediaDevices.video = flag;
+  localStream.value.getVideoTracks().forEach((track) => {
+    track.enabled = flag;
+  });
 };
 onMounted(() => {
   init();

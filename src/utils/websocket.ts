@@ -41,7 +41,7 @@ export class WebSocketClient {
   onOpen() {
     this.connectRetryCount = 0;
     // this.sendHeart();
-    console.log('建立连接');
+    console.log('websocket建立连接');
     this.onOpenCallback?.();
   }
 
@@ -50,13 +50,13 @@ export class WebSocketClient {
   }
 
   onClose() {
-    console.log('连接关闭');
+    console.log('websocket连接关闭');
   }
 
   // 连接出错-重新连接
   onError(e: Event) {
     this.reconnect();
-    console.error('出现错误', e.target);
+    console.error('websocket出现错误', e.target);
   }
 
   // 心跳保活
