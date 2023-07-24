@@ -11,7 +11,7 @@
     ></el-input>
     <el-button type="primary" @click="sendInstruction" :disabled="btnDiabled">发送指令</el-button>
     <el-button
-      :type="isAudioOpen ? 'success' : 'primary'"
+      :type="isAudioOpen ? 'success' : 'warning'"
       @click="handleMedia('audio')"
       :disabled="btnDiabled"
       :icon="isAudioOpen ? Mute : Microphone"
@@ -19,7 +19,7 @@
       {{ isAudioOpen ? '关闭' : '打开' }}麦克风
     </el-button>
     <el-button
-      :type="isVideoOpen ? 'success' : 'primary'"
+      :type="isVideoOpen ? 'success' : 'warning'"
       @click="handleMedia('video')"
       :icon="isVideoOpen ? VideoPause : VideoPlay"
       >{{ isVideoOpen ? '关闭' : '打开' }}本地视频</el-button

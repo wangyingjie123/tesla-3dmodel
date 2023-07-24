@@ -83,15 +83,15 @@ const onMessageCallback = (wsMessage: string) => {
 };
 // websocket连接
 const setupConnect = () => {
-  // const regExp = /^(ws:\/\/|wss:\/\/)[A-Za-z0-9\-._~:/?#[\]@!$&'()*+,;=]+$/;
-  // const wsuri = roomId.value.trim();
-  // if (!regExp.test(wsuri)) {
-  //   ElMessage.error('请输入正确的websocket地址');
-  //   return;
-  // }
+  const regExp = /^(ws:\/\/|wss:\/\/)[A-Za-z0-9\-._~:/?#[\]@!$&'()*+,;=]+$/;
+  const wsuri = roomId.value.trim();
+  if (!regExp.test(wsuri)) {
+    ElMessage.error('请输入正确的websocket地址');
+    return;
+  }
   socket = new WebSocketClient({
-    // wsuri,
-    wsuri: `ws://10.1.60.209:9012`,
+    wsuri,
+    // wsuri: `ws://10.1.60.209:9012`,
     // wsuri: 'ws://10.1.49.170:9012',
     onMessageCallback,
     onOpenCallback: () => {
