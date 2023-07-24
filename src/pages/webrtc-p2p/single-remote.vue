@@ -28,9 +28,6 @@
           ></el-input>
           <el-button type="primary" @click="setupConnect" :disabled="!btnDiabled">加入</el-button>
           <el-button type="danger" @click="handleLeave" :disabled="btnDiabled">关闭连接</el-button>
-          <el-select v-model="audioDeviceId" @change="switchAudio" placeholder="Select" class="margin-left-10">
-            <el-option v-for="item in options" :key="item.deviceId" :label="item.label" :value="item.deviceId" />
-          </el-select>
         </el-card>
       </el-col>
       <el-col :span="24">
@@ -59,11 +56,9 @@ const dataChannel = ref<RTCDataChannel | null>(null);
 const localStream = ref<MediaStream>(new MediaStream());
 const consoleRef = ref<{ writeInfo: (info: string) => void; reduction: () => void }>();
 const roomId = ref('');
-const options = ref<MediaDeviceInfo[]>([]);
-const audioDeviceId = ref('');
+const btnDiabled = ref(true);
 const mediaDevices = reactive<Record<'audio' | 'video', boolean>>({ audio: true, video: true });
 
-const btnDiabled = ref(true);
 let socket: WebSocketClient;
 let iceConnectionState: RTCIceConnectionState = 'closed';
 
@@ -102,18 +97,14 @@ const setupConnect = () => {
   roomId.value = '';
 };
 // 初始化本地媒体
-const initLocalStream = async (deviceId: string) => {
+const initLocalStream = async () => {
   const localVideo = document.getElementById('local-video') as HTMLVideoElement;
   localStream.value = await navigator.mediaDevices.getUserMedia({
     video: { width: 1280, height: 720 },
-    audio: { deviceId: { exact: deviceId } },
+    audio: true,
   });
   localVideo.srcObject = localStream.value;
-  // 监听设备变化
-  navigator.mediaDevices.ondevicechange = async () => {
-    await getDevices();
-    await switchAudio();
-  };
+  handleAudio(false);
 };
 // 初始化peerConnection
 const initp2p = () => {
@@ -141,8 +132,8 @@ const initp2p = () => {
   // 监听连接状态变化
   peerConnection.value.oniceconnectionstatechange = () => {
     const connectionState = peerConnection.value?.iceConnectionState;
-    console.log('peerConnection 状态:', connectionState);
     iceConnectionState = connectionState as RTCIceConnectionState;
+    console.log('peerConnection 状态:', iceConnectionState);
     // 当连接状态为 disconnected 或者 failed 时，表明连接已断开
     if (connectionState === 'disconnected' || connectionState === 'failed') {
       // 连接已断开，执行相应的处理逻辑
@@ -154,11 +145,11 @@ const initp2p = () => {
     consoleRef.value?.writeInfo(`接收到的指令：${event.data}`);
   };
   peerConnection.value.ondatachannel = (event) => {
-    ElMessage.success('已建立p2p连接');
+    ElMessage.success('webtc连接已建立');
     btnDiabled.value = false;
     const channel = event.channel;
     channel.onopen = () => {
-      channel.send('建立连接!');
+      channel.send('webtc连接已建立!');
     };
     channel.onmessage = (event) => {
       console.log(event.data);
@@ -195,46 +186,7 @@ async function addIceCandidate(candidate: RTCIceCandidate) {
     // console.error(e);
   }
 }
-// 获取设备列表
-async function getDevices() {
-  const devices = await navigator.mediaDevices.enumerateDevices();
-  const videoDevices = devices.filter((device) => device.kind === 'audioinput');
-  options.value = videoDevices;
-  audioDeviceId.value = videoDevices[0].deviceId;
-  console.log('🎤🎤🎤 / 麦克风列表', videoDevices);
-}
-// 切换麦克风
-const switchAudio = async () => {
-  try {
-    // Get the current audio track from the local stream
-    const audioTrack = localStream.value.getAudioTracks()[0];
-    // Stop the current microphone track
-    audioTrack.stop();
-    // Get a new audio track from a different microphone
-    await initLocalStream(audioDeviceId.value);
-    if (mediaDevices.audio === false) {
-      handleAudio(false);
-    }
-    if (mediaDevices.video === false) {
-      handleVideo(false);
-    }
-    const newAudioTrack = localStream.value.getAudioTracks()[0];
-    // Replace the old audio track with the new one in the local stream
-    localStream.value.removeTrack(audioTrack);
-    localStream.value.addTrack(newAudioTrack);
-    // Get the RTCPeerConnection and transceiver (your existing setup)
-    if (iceConnectionState === 'connected') {
-      const audioTransceiver = peerConnection.value
-        ?.getTransceivers()
-        .find((transceiver) => transceiver.sender.track?.kind === 'audio');
-      // Replace the old audio track with the new one in the transceiver
-      audioTransceiver?.sender.replaceTrack(newAudioTrack);
-    }
-    console.log('麦克风切换成功!');
-  } catch (error) {
-    console.error('Error switching microphone:', error);
-  }
-};
+
 // 打开/关闭麦克风
 const handleAudio = (flag: boolean) => {
   mediaDevices.audio = flag;
@@ -260,10 +212,7 @@ function handleLeave() {
   consoleRef.value?.reduction();
 }
 onMounted(() => {
-  getDevices().then(() => {
-    initLocalStream(audioDeviceId.value);
-    handleAudio(false);
-  });
+  initLocalStream();
 });
 onUnmounted(() => {
   handleLeave();
