@@ -79,7 +79,7 @@ const remoteAnswer = ref('');
 const drawer = ref(false);
 const btnDiabled = ref(true);
 
-const mediaDevices = reactive<Record<'audio' | 'video', boolean>>({ audio: true, video: true });
+const mediaDevices = reactive<Record<'audio' | 'video', boolean>>({ audio: false, video: true });
 // 初始化
 const init = async () => {
   // 获取本地端视频标签
