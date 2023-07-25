@@ -60,7 +60,6 @@ const btnDiabled = ref(true);
 const mediaDevices = reactive<Record<'audio' | 'video', boolean>>({ audio: true, video: true });
 
 let socket: WebSocketClient;
-let iceConnectionState: RTCIceConnectionState = 'closed';
 
 const onMessageCallback = (wsMessage: string) => {
   try {
@@ -88,6 +87,7 @@ const setupConnect = () => {
     wsuri,
     // wsuri: `ws://10.1.60.209:9012`,
     // wsuri: 'ws://10.1.49.170:9012',
+    // wsuri: 'ws://10.1.49.191:9012',
     onMessageCallback,
     onOpenCallback: () => {
       initp2p();
@@ -132,8 +132,12 @@ const initp2p = () => {
   // 监听连接状态变化
   peerConnection.value.oniceconnectionstatechange = () => {
     const connectionState = peerConnection.value?.iceConnectionState;
-    iceConnectionState = connectionState as RTCIceConnectionState;
-    console.log('peerConnection 状态:', iceConnectionState);
+    console.log('peerConnection 状态:', connectionState);
+    if (connectionState === 'connected') {
+      ElMessage.success('webtc连接已建立');
+      btnDiabled.value = false;
+      socket.destory();
+    }
     // 当连接状态为 disconnected 或者 failed 时，表明连接已断开
     if (connectionState === 'disconnected' || connectionState === 'failed') {
       // 连接已断开，执行相应的处理逻辑
@@ -145,8 +149,6 @@ const initp2p = () => {
     consoleRef.value?.writeInfo(`接收到的指令：${event.data}`);
   };
   peerConnection.value.ondatachannel = (event) => {
-    ElMessage.success('webtc连接已建立');
-    btnDiabled.value = false;
     const channel = event.channel;
     channel.onopen = () => {
       channel.send('webtc连接已建立!');
@@ -175,8 +177,11 @@ async function createOffer() {
 }
 // 添加 answer
 async function addAnswer(answerSdp: RTCSessionDescription) {
-  await peerConnection.value?.setRemoteDescription(answerSdp);
-  socket.destory();
+  try {
+    await peerConnection.value?.setRemoteDescription(answerSdp);
+  } catch (e) {
+    console.error(e);
+  }
 }
 // 添加ice代理
 async function addIceCandidate(candidate: RTCIceCandidate) {

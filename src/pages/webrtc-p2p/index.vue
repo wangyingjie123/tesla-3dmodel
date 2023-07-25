@@ -99,6 +99,10 @@ const init = async () => {
   });
   // 先禁用音频
   localStream.value.getAudioTracks().forEach((track) => {
+    const audiInfo = `Audio Sample Rate: ${track.getSettings().sampleRate} Hz | Channels: ${
+      track.getSettings().channelCount
+    }`;
+    console.log(audiInfo);
     track.enabled = false;
   });
   // 监听文本信息
