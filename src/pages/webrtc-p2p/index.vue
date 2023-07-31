@@ -54,15 +54,15 @@ const localStream = ref<MediaStream>(new MediaStream());
 const peerConnection = ref<RTCPeerConnection>(
   new RTCPeerConnection({
     iceServers: [
-      {
-        urls: 'stun:172.16.40.202:3478',
-      },
+      // {
+      //   urls: 'stun:172.16.40.202:3478',
+      // },
       // {
       //   urls: 'stun:stun.voipbuster.com',
       // },
-      // {
-      //   urls: 'stun:stun.l.google.com:19301',
-      // },
+      {
+        urls: 'stun:stun.l.google.com:19301',
+      },
       // TURN 服务器,这个对服务器压力太大了，目前没找到免费的，后续我在自己的服务器上弄一个
       // {
       //   urls: 'turn:1.119.169.85:10042',

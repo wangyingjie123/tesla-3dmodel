@@ -60,6 +60,7 @@ const btnDiabled = ref(true);
 const mediaDevices = reactive<Record<'audio' | 'video', boolean>>({ audio: true, video: true });
 
 let socket: WebSocketClient;
+let timer: number;
 
 const onMessageCallback = (wsMessage: string) => {
   try {
@@ -86,8 +87,8 @@ const setupConnect = () => {
   socket = new WebSocketClient({
     wsuri,
     // wsuri: `ws://10.1.60.209:9012`,
-    // wsuri: 'ws://10.1.49.170:9012',
-    // wsuri: 'ws://10.1.49.191:9012',
+    // wsuri: 'ws://10.1.49.170:9012', // nx卡
+    // wsuri: 'ws://10.1.60.137:9012',
     onMessageCallback,
     onOpenCallback: () => {
       initp2p();
@@ -98,13 +99,17 @@ const setupConnect = () => {
 };
 // 初始化本地媒体
 const initLocalStream = async () => {
-  const localVideo = document.getElementById('local-video') as HTMLVideoElement;
-  localStream.value = await navigator.mediaDevices.getUserMedia({
-    video: { width: 1280, height: 720 },
-    audio: true,
-  });
-  localVideo.srcObject = localStream.value;
-  handleAudio(false);
+  try {
+    const localVideo = document.getElementById('local-video') as HTMLVideoElement;
+    localStream.value = await navigator.mediaDevices.getUserMedia({
+      video: { width: 1280, height: 720 },
+      audio: true,
+    });
+    localVideo.srcObject = localStream.value;
+    handleAudio(false);
+  } catch (e) {
+    ElMessage.error(`获取本地媒体流失败：${e}`);
+  }
 };
 // 初始化peerConnection
 const initp2p = () => {
@@ -133,15 +138,18 @@ const initp2p = () => {
   peerConnection.value.oniceconnectionstatechange = () => {
     const connectionState = peerConnection.value?.iceConnectionState;
     console.log('peerConnection 状态:', connectionState);
+    timer && window.clearTimeout(timer);
     if (connectionState === 'connected') {
-      ElMessage.success('webtc连接已建立');
+      ElMessage.success('webrtc连接已建立');
       btnDiabled.value = false;
       socket.destory();
     }
     // 当连接状态为 disconnected 或者 failed 时，表明连接已断开
     if (connectionState === 'disconnected' || connectionState === 'failed') {
-      // 连接已断开，执行相应的处理逻辑
-      console.log('peerConnection 远程连接已断开');
+      timer = window.setTimeout(() => handleLeave(), 30000);
+    }
+    if (connectionState === 'closed') {
+      handleLeave();
     }
   };
   // 接收到服务端的消息
@@ -151,7 +159,7 @@ const initp2p = () => {
   peerConnection.value.ondatachannel = (event) => {
     const channel = event.channel;
     channel.onopen = () => {
-      channel.send('webtc连接已建立!');
+      channel.send('webrtc连接已建立!');
     };
     channel.onmessage = (event) => {
       console.log(event.data);
@@ -212,6 +220,7 @@ function handleLeave() {
   // localStream.value.getTracks().forEach((track) => {
   //   track.stop();
   // });
+  ElMessage.error('webrtc连接已断开');
   btnDiabled.value = true;
   peerConnection.value?.close();
   consoleRef.value?.reduction();
@@ -220,6 +229,7 @@ onMounted(() => {
   initLocalStream();
 });
 onUnmounted(() => {
+  clearTimeout(timer);
   handleLeave();
 });
 </script>
