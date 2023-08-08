@@ -86,11 +86,38 @@ onMounted(() => {
     // eslint-disable-next-line no-undef, @typescript-eslint/ban-ts-comment
     // @ts-ignore
     // eslint-disable-next-line no-undef
-    recognition = new webkitSpeechRecognition();
-
+    recognition = new webkitSpeechRecognition() || new SpeechRecognition();
+    // 连续识别
+    recognition.continuous = true;
     // 设置语音识别语言，默认为浏览器的语言
     recognition.lang = 'zh-CN'; // 可以根据需要更改语言，如'zh-CN'为中文
-
+    recognition.onaudiostart = () => {
+      console.log('录音开始-audiostart');
+    };
+    recognition.onaudioend = () => {
+      console.log('录音结束-audioend');
+    };
+    recognition.onstart = () => {
+      console.log('收声开始-start');
+    };
+    recognition.onnomatch = () => {
+      console.log('未匹配');
+    };
+    recognition.onsoundstart = () => {
+      console.log('收声开始-soundstart');
+    };
+    recognition.onsoundend = () => {
+      console.log('收声结束-soundend');
+    };
+    recognition.onspeechend = () => {
+      console.log('语音结束-speeched');
+    };
+    recognition.onspeechstart = () => {
+      console.log('语音开始-speechstart');
+    };
+    recognition.onend = () => {
+      console.log('收声结束-end');
+    };
     // 在语音识别结果可用时触发此事件
     recognition.onresult = (event: any) => {
       const result = event.results[event.resultIndex][0].transcript;
@@ -98,7 +125,7 @@ onMounted(() => {
     };
 
     // 在出错时触发此事件
-    recognition.onerror = function (event: any) {
+    recognition.onerror = (event: any) => {
       console.error('语音识别错误：', event.error);
     };
   }
