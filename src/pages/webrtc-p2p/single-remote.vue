@@ -1,5 +1,5 @@
 <template>
-  <div class="p2p-container">
+  <div class="p2p-container" v-loading="loading" element-loading-text="正在建立连接...">
     <el-row class="p2p-container__row">
       <el-col :span="12">
         <div class="video-container">
@@ -49,7 +49,7 @@
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, reactive } from 'vue';
 import { ElMessage } from 'element-plus';
-import { WebSocketClient } from '@/utils/websocket';
+import { WebSocketClient, CloseState } from '@/utils/websocket';
 import ConsoleForm from './components/console-form.vue';
 const peerConnection = ref<RTCPeerConnection | null>(null);
 const dataChannel = ref<RTCDataChannel | null>(null);
@@ -57,6 +57,7 @@ const localStream = ref<MediaStream>(new MediaStream());
 const consoleRef = ref<{ writeInfo: (info: string) => void; reduction: () => void }>();
 const roomId = ref('');
 const btnDiabled = ref(true);
+const loading = ref(false);
 const mediaDevices = reactive<Record<'audio' | 'video', boolean>>({ audio: true, video: true });
 
 let socket: WebSocketClient;
@@ -84,6 +85,7 @@ const setupConnect = () => {
     ElMessage.error('请输入正确的websocket地址');
     return;
   }
+  loading.value = true;
   socket = new WebSocketClient({
     wsuri,
     // wsuri: `ws://10.1.60.209:9012`,
@@ -93,6 +95,12 @@ const setupConnect = () => {
     onOpenCallback: () => {
       initp2p();
       createOffer();
+    },
+    onCloseCallback: (state: CloseState) => {
+      if (state === CloseState.Error) {
+        ElMessage.error('连接超过最大次数，已自动断开连接');
+        loading.value = false;
+      }
     },
   });
   roomId.value = '';
@@ -121,7 +129,6 @@ const initp2p = () => {
       },
     ],
   });
-  dataChannel.value = peerConnection.value.createDataChannel('message', { ordered: false, maxRetransmits: 0 });
   // 添加本地媒体流的轨道都添加到 RTCPeerConnection 中
   localStream.value.getTracks().forEach((track) => {
     peerConnection.value!.addTrack(track, localStream.value);
@@ -138,33 +145,44 @@ const initp2p = () => {
   peerConnection.value.oniceconnectionstatechange = () => {
     const connectionState = peerConnection.value?.iceConnectionState;
     console.log('peerConnection 状态:', connectionState);
-    timer && window.clearTimeout(timer);
     if (connectionState === 'connected') {
       ElMessage.success('webrtc连接已建立');
       btnDiabled.value = false;
+      loading.value = false;
+      clearTimer();
       socket.destory();
-    }
-    // 当连接状态为 disconnected 或者 failed 时，表明连接已断开
-    if (connectionState === 'disconnected' || connectionState === 'failed') {
+    } else if (connectionState === 'disconnected' || connectionState === 'failed') {
+      if (timer) return;
       timer = window.setTimeout(() => handleLeave(), 30000);
-    }
-    if (connectionState === 'closed') {
+    } else if (connectionState === 'closed') {
+      clearTimer();
       handleLeave();
+    } else {
+      clearTimer();
     }
   };
+  // 创建dataChannel
+  dataChannel.value = peerConnection.value.createDataChannel('message', {
+    ordered: false, // 是否有序
+    maxRetransmits: 0, // 重传消息失败的最大次数
+    negotiated: true, // 默认false，表示由浏览器自动创建，true表示由开发者创建，与id配合使用
+    id: 0,
+  });
   // 接收到服务端的消息
   dataChannel.value.onmessage = (event) => {
     consoleRef.value?.writeInfo(`接收到的指令：${event.data}`);
   };
-  peerConnection.value.ondatachannel = (event) => {
-    const channel = event.channel;
-    channel.onopen = () => {
-      channel.send('webrtc连接已建立!');
-    };
-    channel.onmessage = (event) => {
-      console.log(event.data);
-    };
-  };
+  // 远方调用createDataChannel时触发
+  // peerConnection.value.ondatachannel = (event) => {
+  //   const channel = event.channel;
+  //   dataChannel.value = channel;
+  //   channel.onopen = () => {
+  //     ElMessage.success('dataChannel连接已建立');
+  //   };
+  //   channel.onmessage = (event) => {
+  //     console.log(`接收到的指令：${event.data}`);
+  //   };
+  // };
 };
 // 创建 offer
 async function createOffer() {
@@ -214,17 +232,23 @@ const handleVideo = (flag: boolean) => {
     track.enabled = flag;
   });
 };
+const clearTimer = () => {
+  timer && window.clearTimeout(timer);
+  timer = 0;
+};
 // 离开房间
-function handleLeave() {
+const handleLeave = () => {
   // 关闭本地媒体
   // localStream.value.getTracks().forEach((track) => {
   //   track.stop();
   // });
   ElMessage.error('webrtc连接已断开');
   btnDiabled.value = true;
+  loading.value = false;
+  dataChannel.value?.close();
   peerConnection.value?.close();
   consoleRef.value?.reduction();
-}
+};
 onMounted(() => {
   initLocalStream();
 });

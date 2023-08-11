@@ -37,6 +37,7 @@
 <script setup lang="ts">
 import { ref, onMounted, computed } from 'vue';
 import { Mute, Microphone, VideoPause, VideoPlay } from '@element-plus/icons-vue';
+import { ElMessage } from 'element-plus';
 interface Props {
   localStream: MediaStream;
   dataChannel: RTCDataChannel | null;
@@ -64,6 +65,10 @@ const sendInstruction = () => {
   if (!instruction.value) {
     return;
   }
+  if (props.dataChannel?.readyState !== 'open') {
+    ElMessage.error('信道未建立，无法发送指令');
+    return;
+  }
   props.dataChannel?.send(instruction.value);
   writeInfo(`发送指令：${instruction.value}`);
   instruction.value = '';
@@ -81,7 +86,7 @@ const handleMedia = (media: 'audio' | 'video') => {
   }
 };
 // 语音转文字-实验中功能
-onMounted(() => {
+const asr = () => {
   if ('webkitSpeechRecognition' in window) {
     // eslint-disable-next-line no-undef, @typescript-eslint/ban-ts-comment
     // @ts-ignore
@@ -129,6 +134,9 @@ onMounted(() => {
       console.error('语音识别错误：', event.error);
     };
   }
+};
+onMounted(() => {
+  asr();
 });
 const recognitionStart = () => {
   recognition.start();

@@ -1,26 +1,34 @@
+export enum CloseState {
+  Normal = 1000,
+  Error = 1001,
+}
 interface WebsocketPorops {
   onMessageCallback: (message: string) => void;
   wsuri: string;
   maxReconnectCount?: number; // 最大重连次数
   onOpenCallback?: () => void;
+  onCloseCallback?: (closeState: CloseState) => void;
 }
 export class WebSocketClient {
-  readonly heartbeatStr = 'ping';
   onMessageCallback: (message: string) => void;
   wsuri = '';
   maxReconnectCount = 5; // 最大重连次数
   onOpenCallback?: () => void;
+  onCloseCallback?: (closeState: CloseState) => void;
+  private readonly heartbeatStr = 'ping';
   private pingCount = 0; // 心跳次数
   private websocket: WebSocket | null = null;
+  private isError = false; // 是否出错
   private connectRetryCount = 0; // 当前重连次数
   private timeoutnum: ReturnType<typeof setTimeout> | undefined;
   private heartbeat: ReturnType<typeof setTimeout> | undefined;
 
-  constructor({ onMessageCallback, wsuri, maxReconnectCount, onOpenCallback }: WebsocketPorops) {
+  constructor({ onMessageCallback, wsuri, maxReconnectCount, onOpenCallback, onCloseCallback }: WebsocketPorops) {
     this.onMessageCallback = onMessageCallback;
     this.wsuri = wsuri;
     this.maxReconnectCount = maxReconnectCount ?? this.maxReconnectCount;
     this.onOpenCallback = onOpenCallback;
+    this.onCloseCallback = onCloseCallback;
     this.initWebsocket();
   }
   // 初始化weosocket
@@ -40,8 +48,8 @@ export class WebSocketClient {
 
   onOpen() {
     this.connectRetryCount = 0;
+    this.isError = false;
     // this.sendHeart();
-    console.log('websocket建立连接');
     this.onOpenCallback?.();
   }
 
@@ -50,12 +58,18 @@ export class WebSocketClient {
   }
 
   onClose() {
+    if (this.connectRetryCount === this.maxReconnectCount) {
+      this.onCloseCallback?.(CloseState.Error);
+    } else {
+      this.onCloseCallback?.(CloseState.Normal);
+    }
     console.log('websocket连接关闭');
   }
 
   // 连接出错-重新连接
   onError(e: Event) {
     this.reconnect();
+    this.isError = true;
     console.error('websocket出现错误', e.target);
   }
 
