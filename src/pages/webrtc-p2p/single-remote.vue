@@ -165,8 +165,8 @@ const initp2p = () => {
   dataChannel.value = peerConnection.value.createDataChannel('message', {
     ordered: false, // 是否有序
     maxRetransmits: 0, // 重传消息失败的最大次数
-    negotiated: true, // 默认false，表示由浏览器自动创建，true表示由开发者创建，与id配合使用
-    id: 0,
+    // negotiated: true, // 默认false，表示由浏览器自动创建，true表示由开发者创建，与id配合使用
+    // id: 0,
   });
   // 接收到服务端的消息
   dataChannel.value.onmessage = (event) => {
