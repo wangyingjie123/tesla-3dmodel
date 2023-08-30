@@ -55,13 +55,12 @@ const peerConnection = ref<RTCPeerConnection | null>(null);
 const dataChannel = ref<RTCDataChannel | null>(null);
 const localStream = ref<MediaStream>(new MediaStream());
 const consoleRef = ref<{ writeInfo: (info: string) => void; reduction: () => void }>();
-const roomId = ref('');
+const roomId = ref();
 const btnDiabled = ref(true);
 const loading = ref(false);
 const mediaDevices = reactive<Record<'audio' | 'video', boolean>>({ audio: true, video: true });
 
 let socket: WebSocketClient;
-let timer: number;
 
 const onMessageCallback = (wsMessage: string) => {
   try {
@@ -88,7 +87,7 @@ const setupConnect = () => {
   loading.value = true;
   socket = new WebSocketClient({
     wsuri,
-    // wsuri: `ws://10.1.60.209:9012`,
+    // wsuri: `ws://10.1.60.110:9012`,
     // wsuri: 'ws://10.1.49.170:9012', // nx卡
     // wsuri: 'ws://10.1.60.137:9012',
     onMessageCallback,
@@ -98,12 +97,12 @@ const setupConnect = () => {
     },
     onCloseCallback: (state: CloseState) => {
       if (state === CloseState.Error) {
-        ElMessage.error('连接超过最大次数，已自动断开连接');
+        ElMessage.error('尝试连接超过最大次数，请检查网络后刷新页面重试');
         loading.value = false;
       }
     },
   });
-  roomId.value = '';
+  // roomId.value = '';
 };
 // 初始化本地媒体
 const initLocalStream = async () => {
@@ -149,16 +148,12 @@ const initp2p = () => {
       ElMessage.success('webrtc连接已建立');
       btnDiabled.value = false;
       loading.value = false;
-      clearTimer();
       socket.destory();
     } else if (connectionState === 'disconnected' || connectionState === 'failed') {
-      if (timer) return;
-      timer = window.setTimeout(() => handleLeave(), 30000);
+      handleLeave('网络异常，尝试重新连接');
+      setupConnect();
     } else if (connectionState === 'closed') {
-      clearTimer();
       handleLeave();
-    } else {
-      clearTimer();
     }
   };
   // 创建dataChannel
@@ -232,28 +227,25 @@ const handleVideo = (flag: boolean) => {
     track.enabled = flag;
   });
 };
-const clearTimer = () => {
-  timer && window.clearTimeout(timer);
-  timer = 0;
-};
+
 // 离开房间
-const handleLeave = () => {
+const handleLeave = (errMsg?: string) => {
   // 关闭本地媒体
   // localStream.value.getTracks().forEach((track) => {
   //   track.stop();
   // });
-  ElMessage.error('webrtc连接已断开');
+  ElMessage.error(errMsg ? errMsg : 'webrtc连接已断开');
   btnDiabled.value = true;
   loading.value = false;
   dataChannel.value?.close();
   peerConnection.value?.close();
   consoleRef.value?.reduction();
 };
+
 onMounted(() => {
   initLocalStream();
 });
 onUnmounted(() => {
-  clearTimeout(timer);
   handleLeave();
 });
 </script>
