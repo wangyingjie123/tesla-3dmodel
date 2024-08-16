@@ -9,23 +9,23 @@
     </header>
     <canvas id="webgl"></canvas>
     <aside class="aside left">
-      <AsideText @handleStartButtonClick="handleStartButtonClick" />
+      <AsideText @handle-start-button-click="handleStartButtonClick" />
       <div class="box">
-        <div class="box-chart" id="chart_1"></div>
+        <div id="chart_1" class="box-chart"></div>
       </div>
       <div class="box dotted aside-text">
-        <div class="box-chart" id="chart_2"></div>
+        <div id="chart_2" class="box-chart"></div>
       </div>
     </aside>
     <aside class="aside right">
       <div class="box">
-        <div class="box-chart" id="chart_3"></div>
+        <div id="chart_3" class="box-chart"></div>
       </div>
       <div class="box">
-        <div class="box-chart" id="chart_4"></div>
+        <div id="chart_4" class="box-chart"></div>
       </div>
       <div class="box dotted aside-text">
-        <div class="box-chart" id="chart_5"></div>
+        <div id="chart_5" class="box-chart"></div>
       </div>
     </aside>
     <Footer />

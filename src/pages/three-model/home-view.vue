@@ -1,6 +1,6 @@
 <template>
   <div class="home">
-    <Progress :resourceList="resourceList"></Progress>
+    <Progress :resource-list="resourceList"></Progress>
     <canvas class="webgl"></canvas>
     <div class="vr">
       <span class="vr-box">
@@ -11,11 +11,11 @@
     <!-- 场景切换点 -->
     <div class="switch">
       <span
-        class="switch-button"
         v-for="(room, index) in rooms"
-        :key="index"
-        @click="handleSwitchButtonClick(room.key)"
         v-show="room.key !== data.currentRoom"
+        :key="index"
+        class="switch-button"
+        @click="handleSwitchButtonClick(room.key)"
       >
         <b class="switch-button__text">{{ room.name }}</b>
         <i class="switch-button__icon"></i>
@@ -23,12 +23,12 @@
     </div>
     <!-- 交互点 -->
     <div
-      class="point"
       v-for="(point, index) in interactivePoints"
+      v-show="point.room === data.currentRoom"
       :key="index"
+      class="point"
       :class="[`point-${index}`, `point-${point.key}`]"
       @click="handleReactivePointClick(point)"
-      v-show="point.room === data.currentRoom"
     >
       <div class="point-label animate-point-wave" :class="[`label-${index}`, `label-${point.key}`]">
         <label class="point-label__tips">

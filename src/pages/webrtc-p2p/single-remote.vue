@@ -1,5 +1,5 @@
 <template>
-  <div class="p2p-container" v-loading="loading" element-loading-text="正在建立连接...">
+  <div v-loading="loading" class="p2p-container" element-loading-text="正在建立连接...">
     <el-row class="p2p-container__row">
       <el-col :span="12">
         <div class="video-container">
@@ -26,21 +26,21 @@
             clearable
             @keyup.enter="setupConnect"
           ></el-input>
-          <el-button type="primary" @click="setupConnect" :disabled="!btnDiabled">加入</el-button>
-          <el-button type="danger" @click="handleLeave" :disabled="btnDiabled">关闭连接</el-button>
+          <el-button type="primary" :disabled="!btnDiabled" @click="setupConnect">加入</el-button>
+          <el-button type="danger" :disabled="btnDiabled" @click="handleLeave">关闭连接</el-button>
         </el-card>
       </el-col>
       <el-col :span="24">
         <ConsoleForm
-          :localStream="localStream"
-          :peerConnection="peerConnection"
-          :dataChannel="dataChannel"
-          :btnDiabled="btnDiabled"
-          :mediaDevices="mediaDevices"
-          :experiment="false"
-          @handleAudio="handleAudio"
-          @handleVideo="handleVideo"
           ref="consoleRef"
+          :local-stream="localStream"
+          :peer-connection="peerConnection"
+          :data-channel="dataChannel"
+          :btn-diabled="btnDiabled"
+          :media-devices="mediaDevices"
+          :experiment="false"
+          @handle-audio="handleAudio"
+          @handle-video="handleVideo"
         ></ConsoleForm>
       </el-col>
     </el-row>

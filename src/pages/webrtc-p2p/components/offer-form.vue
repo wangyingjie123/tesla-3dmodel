@@ -11,7 +11,7 @@
     </template>
     <el-input :value="localOffer" disabled placeholder="点击上方create offer" class="input-with-select">
       <template #append>
-        <el-button @click="copyOffer(localOffer)" :disabled="!localOffer">复制</el-button>
+        <el-button :disabled="!localOffer" @click="copyOffer(localOffer)">复制</el-button>
       </template>
     </el-input>
   </el-card>
@@ -26,14 +26,14 @@
         </p>
       </div>
     </template>
-    <el-input placeholder="请粘贴用户1 SDP offer" v-model="sdpOffer" clearable class="input-with-select">
+    <el-input v-model="sdpOffer" placeholder="请粘贴用户1 SDP offer" clearable class="input-with-select">
       <template #append>
         <el-button :disabled="!sdpOffer" @click="emit('createAnswer', sdpOffer)">create answer</el-button>
       </template>
     </el-input>
     <el-input placeholder="SDP answer" :value="remoteAnswer" disabled class="margin-top-10">
       <template #append>
-        <el-button @click="copyOffer(remoteAnswer)" :disabled="!remoteAnswer">复制</el-button>
+        <el-button :disabled="!remoteAnswer" @click="copyOffer(remoteAnswer)">复制</el-button>
       </template>
     </el-input>
   </el-card>
@@ -46,9 +46,9 @@
         <p class="margin-top-10">将用户2生成的SDP answer粘贴到下方，然后点击add answer</p>
       </div>
     </template>
-    <el-input placeholder="请粘贴用户2 SDP answer" v-model="remoteAnswerCopy" clearable class="input-with-select">
+    <el-input v-model="remoteAnswerCopy" placeholder="请粘贴用户2 SDP answer" clearable class="input-with-select">
       <template #append>
-        <el-button @click="emit('addAnswer', remoteAnswerCopy)" :disabled="!remoteAnswerCopy">add answer</el-button>
+        <el-button :disabled="!remoteAnswerCopy" @click="emit('addAnswer', remoteAnswerCopy)">add answer</el-button>
       </template>
     </el-input>
   </el-card>

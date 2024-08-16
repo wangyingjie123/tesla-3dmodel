@@ -10,7 +10,7 @@ const video = ref<HTMLVideoElement>();
 
 onMounted(() => {
   loadScript('./js/jswebrtc.min.js').then(() => {
-    const { JSWebrtc } = window;
+    const { JSWebrtc } = window as any;
     const url = 'webrtc://r.ossrs.net/live/livestream';
     new JSWebrtc.Player(url, {
       video: video.value,

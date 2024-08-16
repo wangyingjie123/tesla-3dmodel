@@ -1,5 +1,5 @@
 <template>
-  <div class="panorama" ref="panorama"></div>
+  <div ref="panorama" class="panorama"></div>
 </template>
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted } from 'vue';

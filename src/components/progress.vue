@@ -1,6 +1,6 @@
 <template>
   <Transition>
-    <div class="progress" v-if="!data.loadingComplete">
+    <div v-if="!data.loadingComplete" class="progress">
       <el-progress type="dashboard" :percentage="data.percent" :color="colors" :width="200" />
     </div>
   </Transition>

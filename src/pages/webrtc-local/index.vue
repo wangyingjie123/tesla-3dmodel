@@ -2,7 +2,7 @@
   <div class="webrtc">
     <div class="webrtc-video margin-right-20">
       <video ref="video" class="webrtc-video__inner" width="480" height="300" autoplay playsinline muted></video>
-      <el-button type="primary" @click="takePhoto" class="button">拍摄</el-button>
+      <el-button type="primary" class="button" @click="takePhoto">拍摄</el-button>
       <el-button @click="setVideoBackground">设置虚拟背景</el-button>
     </div>
     <div class="webrtc-img">
@@ -28,7 +28,7 @@
           <option :value="2">后置摄像头</option>
         </select>
       </div>
-      <Shared @playStream="playLocalStream"></Shared>
+      <Shared @play-stream="playLocalStream"></Shared>
     </div>
   </div>
   <Video ref="sonRef"></Video>

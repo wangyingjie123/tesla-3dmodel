@@ -2,42 +2,42 @@
   <el-container class="p2p-main">
     <el-header class="p2p-header">
       <el-text type="warning" size="large">Webrtc-P2P通话</el-text>
-      <el-button @click="drawer = true" type="primary">打开操作面板</el-button>
+      <el-button type="primary" @click="drawer = true">打开操作面板</el-button>
     </el-header>
     <el-main>
       <el-row>
         <!-- 给自己本地的视频播放设置静音，防止产生回音 -->
         <el-col :span="12" class="p2p-video">
           <h2 class="p2p-subtitle margin-bottom-10">本地摄像头</h2>
-          <video class="p2p-video__dom" ref="localRef" autoplay playsinline muted></video>
+          <video ref="localRef" class="p2p-video__dom" autoplay playsinline muted></video>
         </el-col>
         <el-col :span="12" class="p2p-video">
           <h2 class="p2p-subtitle margin-bottom-10">用户2摄像头</h2>
-          <video class="p2p-video__dom" ref="remoteRef" autoplay playsinline></video>
+          <video ref="remoteRef" class="p2p-video__dom" autoplay playsinline></video>
         </el-col>
       </el-row>
     </el-main>
     <el-footer>
       <ConsoleForm
-        :localStream="localStream"
-        :peerConnection="peerConnection"
-        :dataChannel="dataChannel"
-        :btnDiabled="btnDiabled"
-        :mediaDevices="mediaDevices"
-        :experiment="true"
-        @handleAudio="handleAudio"
-        @handleVideo="handleVideo"
         ref="consoleRef"
+        :local-stream="localStream"
+        :peer-connection="peerConnection"
+        :data-channel="dataChannel"
+        :btn-diabled="btnDiabled"
+        :media-devices="mediaDevices"
+        :experiment="true"
+        @handle-audio="handleAudio"
+        @handle-video="handleVideo"
       ></ConsoleForm>
     </el-footer>
   </el-container>
   <el-drawer v-model="drawer" title="本地操作区域-打开2个tab页">
     <OfferForm
-      :localOffer="localOffer"
-      :remoteAnswer="remoteAnswer"
-      @createOffer="createOffer"
-      @createAnswer="createAnswer"
-      @addAnswer="addAnswer"
+      :local-offer="localOffer"
+      :remote-answer="remoteAnswer"
+      @create-offer="createOffer"
+      @create-answer="createAnswer"
+      @add-answer="addAnswer"
     ></OfferForm>
   </el-drawer>
 </template>

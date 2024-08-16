@@ -9,19 +9,19 @@
       :disabled="btnDiabled"
       @keyup.enter="sendInstruction"
     ></el-input>
-    <el-button type="primary" @click="sendInstruction" :disabled="btnDiabled">发送指令</el-button>
+    <el-button type="primary" :disabled="btnDiabled" @click="sendInstruction">发送指令</el-button>
     <el-button
       :type="isAudioOpen ? 'success' : 'warning'"
-      @click="handleMedia('audio')"
       :disabled="btnDiabled"
       :icon="isAudioOpen ? Mute : Microphone"
+      @click="handleMedia('audio')"
     >
       {{ isAudioOpen ? '关闭' : '打开' }}麦克风
     </el-button>
     <el-button
       :type="isVideoOpen ? 'success' : 'warning'"
-      @click="handleMedia('video')"
       :icon="isVideoOpen ? VideoPause : VideoPlay"
+      @click="handleMedia('video')"
       >{{ isVideoOpen ? '关闭' : '打开' }}本地视频</el-button
     >
     <el-popover placement="bottom" title="指令面板" :width="500" trigger="click">
@@ -30,8 +30,8 @@
         <el-button :disabled="btnDiabled">打开对话框</el-button>
       </template>
     </el-popover>
-    <el-button type="primary" v-if="experiment" @click="recognitionStart">开始录音</el-button>
-    <el-button type="primary" v-if="experiment" @click="recognitionStop">结束录音</el-button>
+    <el-button v-if="experiment" type="primary" @click="recognitionStart">开始录音</el-button>
+    <el-button v-if="experiment" type="primary" @click="recognitionStop">结束录音</el-button>
   </el-card>
 </template>
 <script setup lang="ts">
@@ -88,7 +88,7 @@ const handleMedia = (media: 'audio' | 'video') => {
 // 语音转文字-实验中功能
 const asr = () => {
   if ('webkitSpeechRecognition' in window) {
-    // eslint-disable-next-line no-undef, @typescript-eslint/ban-ts-comment
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     // eslint-disable-next-line no-undef
     recognition = new webkitSpeechRecognition() || new SpeechRecognition();

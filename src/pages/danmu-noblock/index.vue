@@ -1,16 +1,16 @@
 <template>
   <div class="danmu">
     <div
-      class="danmu-video"
       v-loading="loading"
+      class="danmu-video"
       element-loading-text="人物检测模型加载中... "
       element-loading-background="rgba(0, 0, 0, 0.7)"
     >
       <video
+        ref="videoRef"
         src="/video/dance.mp4"
         class="danmu-video-inner"
         preload="true"
-        ref="videoRef"
         loop
         x5-video-player-fullscreen="true"
         x5-playsinline="true"
@@ -18,17 +18,17 @@
         webkit-playsinline="true"
         crossOrigin="anonymous"
       ></video>
-      <div class="danmu-mask" ref="barrageBoxRef"></div>
+      <div ref="barrageBoxRef" class="danmu-mask"></div>
       <el-button type="primary" class="danmu-video-btn" @click="videoPlay">{{
         videoStatus === VideoStatus.playing ? '暂停' : '播放'
       }}</el-button>
     </div>
     <el-form
+      ref="ruleFormRef"
       :inline="true"
       :model="formInline"
       :rules="rules"
       :disabled="loading"
-      ref="ruleFormRef"
       @submit.stop.prevent
     >
       <el-form-item label="" prop="message" class="danmu-input">
@@ -119,7 +119,6 @@ const setBarrageBgImage = async () => {
   }
 };
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const danmuScroll = (child: HTMLSpanElement) => {
   // 处理弹幕
 

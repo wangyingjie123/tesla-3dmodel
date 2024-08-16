@@ -2,7 +2,7 @@ import { defineConfig } from 'vite';
 import path from 'path';
 // import * as fs from 'fs';
 import vue from '@vitejs/plugin-vue';
-import eslintPlugin from 'vite-plugin-eslint'; //导入包
+// import eslintPlugin from 'vite-plugin-eslint'; //导入包
 import AutoImport from 'unplugin-auto-import/vite';
 import Components from 'unplugin-vue-components/vite';
 import { ElementPlusResolver } from 'unplugin-vue-components/resolvers';
@@ -51,7 +51,7 @@ export default defineConfig({
       resolvers: [ElementPlusResolver()],
     }),
     vue(), // 增加下面的配置项,这样在运行时就能检查eslint规范
-    eslintPlugin(),
+    // eslintPlugin(),
   ],
   server: {
     host: '0.0.0.0',

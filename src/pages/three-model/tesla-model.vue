@@ -1,5 +1,5 @@
 <template>
-  <div class="loading" v-if="isLoading">
+  <div v-if="isLoading" class="loading">
     <div class="loading-inner">
       <div class="loading-inner__item" :style="{ width: loadingWidth + '%' }"></div>
     </div>
@@ -8,20 +8,20 @@
   <div class="mask">
     <p class="margin-bottom-10">x : {{ x }} y:{{ y }} z :{{ z }}</p>
     <div>
-      <el-button @click="isAutoFun" type="primary">转动车</el-button>
-      <el-button @click="stop" type="warning">停止</el-button>
+      <el-button type="primary" @click="isAutoFun">转动车</el-button>
+      <el-button type="warning" @click="stop">停止</el-button>
     </div>
     <div class="mask-flex">
       <div
-        @click="setCarColor(index)"
-        class="mask-flex__item"
         v-for="(item, index) in colorAry"
         :key="index"
+        class="mask-flex__item"
         :style="{ backgroundColor: item }"
+        @click="setCarColor(index)"
       ></div>
     </div>
   </div>
-  <div class="canvas" ref="canvas"></div>
+  <div ref="canvas" class="canvas"></div>
 </template>
 
 <script setup>

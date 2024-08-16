@@ -1,5 +1,5 @@
 <template>
-  <div class="h265player" id="video"></div>
+  <div id="video" class="h265player"></div>
 </template>
 <script setup lang="ts">
 // https://github.com/goldvideo/h265player

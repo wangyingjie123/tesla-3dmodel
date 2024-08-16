@@ -6,7 +6,7 @@
         <el-skeleton-item variant="circle" />
       </template>
     </el-skeleton>
-    <el-calendar v-model="date" v-if="!loading" />
+    <el-calendar v-if="!loading" v-model="date" />
   </div>
 </template>
 <script setup lang="ts">

@@ -47,7 +47,10 @@ defineProps({
     width: 38px;
     background: url('@/assets/images/home/rotate.png') no-repeat center;
     background-size: 100% 100%;
-    transition: left 0.5s ease-in-out, top 0.5s ease-in-out, transform ease-in-out;
+    transition:
+      left 0.5s ease-in-out,
+      top 0.5s ease-in-out,
+      transform ease-in-out;
     position: absolute;
     transform-origin: center bottom;
   }
